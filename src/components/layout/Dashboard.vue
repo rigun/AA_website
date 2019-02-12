@@ -1,0 +1,205 @@
+<template>
+   <div class="content">
+    <vue-topprogress ref="topProgress"></vue-topprogress>
+    <div v-if="loading == true"></div>
+    <div  v-else>
+    <div id="topnav" class="topnavDashboard" >
+        <nav class="navbar has-shadow dashnav " :class="{'showLeft': leftNav}" style="padding: 0px">
+                <div class="navbar-start ">
+                    <div class="navbar-item box-hamburger">
+                        <div class="hamburger" @click.prevent="hamburger()">
+                            <div class="bar1"></div>
+                            <div class="bar2"></div>
+                            <div class="bar3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="navbar-end">
+                        <div class="navbar-item notif-space" v-if="roles == 'superadministrator'">
+                            <router-link v-bind:to="{name: 'confirmPayment'}" style="text-decoration: none; color: black"><i class="fa fa-bell"></i></router-link>
+                            <div class="notifRed" v-if="count>0">{{count}}</div>
+                            
+                        </div>
+                        <div class="navbar-item dropdown-space has-dropdown is-hoverable">
+                            
+                        <div class="navbar-item" style="display:flex">
+                            <div class="inisial-name" @click.prevent="rightDropDown()">
+                                {{inisial}}
+                            </div>
+                            <div id="textRightNav" class="text-item" @click.prevent="rightDropDown()">
+                                <h2 class="name-text">
+                                <strong>{{user.name}}
+                                    </strong>
+                                </h2>
+                                <p class="mute-text" >
+                                    {{roles}}
+                                </p>
+
+                            </div>
+                            <i id="logoRightNav" class="fa fa-chevron-down m-l-15 size-15" @click.prevent="rightDropDown()"></i>
+                        </div>
+                        <div class="navbar-dropdown arrow-up"></div>
+                            <ul id="navbarRight" class="navbar-dropdown is-boxed  is-right box-dropdown-custom" :class="{'showDropDown': showDropDown}">
+                                <li>
+                                    <router-link :to="{name: 'changePassword'}" class="navbar-item">Ubah Password</router-link>
+                                    </li>
+                                <hr class="navbar-divider">
+                                <li>  <router-link v-bind:to="{name: 'Logout'}" class="navbar-item">
+                                            <span class="icon">
+                                            <i class="fa fa-fw fa-sign-out m-r-5"></i>
+                                            </span>
+                                            Logout
+                            </router-link ></li>
+                            </ul>
+                        </div>
+                    
+
+                </div>
+                        
+            </nav>
+    </div>
+       <div id="side-menu"  class="side-menu" :class="{'showLeft': leftNav}">
+            <aside class="menu">
+                <div id="side-header" class="side-header">
+                    <div class="menu-label imgLabel">
+                        <!-- <img src="/images/yesplislogo_white.svg" style="width: 120px;"> -->
+                        Atma Auto
+                    </div>
+                </div>
+                <hr class="separator-side">
+                <div class="side-body">
+                
+                    <ul class="menu-list dashboardlist">
+                        <li><router-link v-bind:to="{name: 'DashboardContent'}"><v-icon dark style="margin-right: 5px;">dashboard</v-icon>  <span>Dashboard</span> </router-link></li>
+                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'userManagement'}" > <v-icon dark style="margin-right: 5px;">assignment_ind</v-icon>  <span>User Manager</span> </router-link></li>                        
+                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'EventContent'}" > <v-icon dark style="margin-right: 5px;">event</v-icon>  <span>Event Manager</span> </router-link></li>                        
+                        <li><a href="/dashboard/participants"><v-icon dark style="margin-right: 5px;">account_box</v-icon>  <span>Participant Manager</span> </a></li>                        
+                    </ul>
+                    <ul class="menu-list dashboardlist" v-if="roles != 'counter'">
+                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'eticket'}"><v-icon dark style="margin-right: 5px;">confirmation_number</v-icon>  <span>Custom Eticket</span> </router-link></li>
+                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'disabledTicket'}"><v-icon dark style="margin-right: 5px;">block</v-icon>  <span>Disabled Ticket</span> </router-link></li>
+                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'yesplis'}"><v-icon dark style="margin-right: 5px;">local_library</v-icon>  <span>Yesplis Control</span> </router-link></li>
+                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'slider'}"><v-icon dark style="margin-right: 5px;">view_carousel</v-icon>  <span>Slider</span> </router-link></li>
+                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'roleController'}"><v-icon dark style="margin-right: 5px;">supervisor_account</v-icon>  <span>Roles Controller</span> </router-link></li>
+                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'trash'}"><v-icon dark style="margin-right: 5px;">delete</v-icon>  <span>Trash (Deleted Participant)</span> </router-link></li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+        <div class="background-dashboard"></div>
+        <div id="app">
+            <main class="dashboardContent" :class="{'showLeft': leftNav}">
+            <transition name="fade">
+            <router-view></router-view>
+            </transition>
+            </main>
+        </div>
+    </div>
+      
+   </div>
+</template>
+<style >
+.notifRed{
+    background: #ff2b2b;
+    border-radius: 100px;
+    position: absolute;
+    right: 4px;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    bottom: 10px;
+}
+</style>
+<script>
+import { vueTopprogress } from 'vue-top-progress'
+import axios from 'axios'
+export default {
+  components: {
+    vueTopprogress
+  },
+  data () {
+    return {
+      notif: [],
+      user: {},
+      error: '',
+      loading: true,
+      roles: localStorage.getItem('roles'),
+      activeFirst: false,
+      wrongPassword: false,
+      leftNav: false,
+      showDropDown: false,
+      first: 0,
+      count: 0
+    }
+  },
+  mounted () {
+    this.$refs.topProgress.start()
+    // if(localStorage.getItem('roles') === 'participant'){
+    //     this.$router.push({ name: 'Logout' })
+    // }else{
+    this.getUser()
+    // }
+  },
+  computed: {
+    inisial () {
+      var initials = ''
+      var names = this.user.role.name.split(' ')
+      for (let n = 0; n < 2; n++) {
+        if (n < names.length) {
+          initials += names[n].substring(0, 1).toUpperCase()
+        }
+      }
+      return initials
+    }
+  },
+  methods: {
+    getCount () {
+      var uri = '/api/count/notif'
+      var config = {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      }
+      axios.get(uri, config).then(response => {
+        this.count = response.data
+      })
+    },
+    rightDropDown () {
+      if (this.showDropDown === true) {
+        this.showDropDown = false
+      } else {
+        this.showDropDown = true
+      }
+    },
+    hamburger () {
+      if (this.leftNav === true) {
+        this.leftNav = false
+      } else {
+        this.leftNav = true
+      }
+    },
+    getUser () {
+      axios.get('http://api1.thekingcorp.org/user', {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      }).then(response => {
+        this.$refs.topProgress.done()
+        this.loading = false
+        if (response.data.status === 'Token is Expired' || response.data.userdata === null || response.data[0] === 'user_not_found') {
+          this.$router.push({ name: 'Logout' })
+        } else {
+          this.user = response.data.userdata
+          this.$nextTick(function () {
+            // this.getCount()
+          })
+        }
+      }).catch(error => {
+        console.log(error)
+        this.$router.push({ name: 'Logout' })
+      })
+    }
+  }
+}
+</script>
