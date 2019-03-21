@@ -28,7 +28,7 @@
                             </div>
                             <div id="textRightNav" class="text-item" @click.prevent="rightDropDown()">
                                 <h2 class="name-text">
-                                <strong>{{user.name}}
+                                <strong>{{user.role.name}}
                                     </strong>
                                 </h2>
                                 <p class="mute-text" >
@@ -62,8 +62,7 @@
             <aside class="menu">
                 <div id="side-header" class="side-header">
                     <div class="menu-label imgLabel">
-                        <!-- <img src="/images/yesplislogo_white.svg" style="width: 120px;"> -->
-                        Atma Auto
+                     <img :src="require(`@/assets/logo.png`)" style="width: 120px;">
                     </div>
                 </div>
                 <hr class="separator-side">
@@ -71,23 +70,14 @@
                 
                     <ul class="menu-list dashboardlist">
                         <li><router-link v-bind:to="{name: 'DashboardContent'}"><v-icon dark style="margin-right: 5px;">dashboard</v-icon>  <span>Dashboard</span> </router-link></li>
-                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'userManagement'}" > <v-icon dark style="margin-right: 5px;">assignment_ind</v-icon>  <span>User Manager</span> </router-link></li>                        
-                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'EventContent'}" > <v-icon dark style="margin-right: 5px;">event</v-icon>  <span>Event Manager</span> </router-link></li>                        
-                        <li><a href="/dashboard/participants"><v-icon dark style="margin-right: 5px;">account_box</v-icon>  <span>Participant Manager</span> </a></li>                        
-                    </ul>
-                    <ul class="menu-list dashboardlist" v-if="roles != 'counter'">
-                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'eticket'}"><v-icon dark style="margin-right: 5px;">confirmation_number</v-icon>  <span>Custom Eticket</span> </router-link></li>
-                        <li v-if="roles != 'counter'"><router-link v-bind:to="{name: 'disabledTicket'}"><v-icon dark style="margin-right: 5px;">block</v-icon>  <span>Disabled Ticket</span> </router-link></li>
-                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'yesplis'}"><v-icon dark style="margin-right: 5px;">local_library</v-icon>  <span>Yesplis Control</span> </router-link></li>
-                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'slider'}"><v-icon dark style="margin-right: 5px;">view_carousel</v-icon>  <span>Slider</span> </router-link></li>
-                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'roleController'}"><v-icon dark style="margin-right: 5px;">supervisor_account</v-icon>  <span>Roles Controller</span> </router-link></li>
-                        <li v-if="roles == 'superadministrator'"><router-link v-bind:to="{name: 'trash'}"><v-icon dark style="margin-right: 5px;">delete</v-icon>  <span>Trash (Deleted Participant)</span> </router-link></li>
+                        <li><router-link v-bind:to="{name: 'branches'}"><v-icon dark style="margin-right: 5px;">dashboard</v-icon>  <span>Cabang</span> </router-link></li>
+                        <li><router-link v-bind:to="{name: 'manageSupplier'}"><v-icon dark style="margin-right: 5px;">dashboard</v-icon>  <span>Supplier</span> </router-link></li>
                     </ul>
                 </div>
             </aside>
         </div>
         <div class="background-dashboard"></div>
-        <div id="app">
+        <div id="appDashboard">
             <main class="dashboardContent" :class="{'showLeft': leftNav}">
             <transition name="fade">
             <router-view></router-view>
@@ -180,7 +170,7 @@ export default {
       }
     },
     getUser () {
-      axios.get('http://api1.thekingcorp.org/user', {
+      axios.get(this.$apiUrl + '/user', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }

@@ -1,18 +1,14 @@
 <template>
   <div id="loginLayout">
-    <nav class="navbar has-shadow is-dark">
-        <div class="container">
-            <div class="navbar-start">
-                <a href="/" class="navbar-item">
-                    <!-- <img src="/images/yesplislogo_white.svg" style="width: 120px;"> -->
-                </a>
-
+    <nav id="mainNav" class="navbar navbar-blue" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <router-link :to="{name:'Landing'}" class="navbar-item" >
+                     <img class="show-logo" :src="require(`@/assets/logo.png`)" style="width: 100%;">
+                </router-link>
             </div>
-            
-        </div>
-    </nav>
+        </nav>
 
-<div class="container p-t-80">
+<div class="container" style="padding-top: 80px;">
     <div class="columns">
         <div class="column">
             
@@ -20,8 +16,7 @@
         <div class="column is-two-fifths">
             <div class="card">
                 <div class="card-content" style="text-align:center">
-                  Atma Auto
-                    <!-- <img src="/images/yesplislogo_dark.svg" style="width: 190px;;"> -->
+                    <img :src="require(`@/assets/logoBlue.png`)" style="width: 190px;;">
                 </div>
                 <hr>
                 <div class="card-content">
@@ -116,7 +111,7 @@ export default {
     },
     submitLogin () {
       this.loginError = false
-      axios.post('https://api1.thekingcorp.org/auth/login', {
+      axios.post(this.$apiUrl + '/auth/login', {
         email: this.email,
         password: this.password
       }).then(response => {

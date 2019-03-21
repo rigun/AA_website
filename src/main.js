@@ -5,9 +5,13 @@ import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
 import Buefy from 'buefy'
-import './../node_modules/bulma/css/bulma.css'
-import './../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
+import 'buefy/dist/buefy.css'
+import 'bulma/css/bulma.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import './style/main.styl'
+import VueCroppie from 'vue-croppie'
+Vue.prototype.$apiUrl = 'https://api1.thekingcorp.org/'
+Vue.use(VueCroppie)
 Vue.use(Buefy)
 Vue.use(Vuetify)
 Vue.config.productionTip = false

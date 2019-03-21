@@ -1,0 +1,542 @@
+// body{
+//     color: white;
+//     background: #f5f5f5;
+//     padding: 0px;
+//     overflow: hidden;
+// }
+a{
+    text-decoration: none !important;
+}
+.background-all{
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+    background: #f5f5f5;
+}
+.navbar{
+    height: 60px !important;
+    background: transparent;
+    align-content: center;
+    position: fixed !important;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    transition: 0.4s;
+    max-width: 1506px;
+    margin: auto;
+    box-shadow: 0 5px 16px 0 rgba(127, 127, 127, 0.2);
+}
+.searchModif{
+    width: 100%;
+    .field{
+        width: 80%;
+        margin: auto;
+        align-items: center;
+        .control{
+            input{
+                background-color: #ececec;
+                color: black;
+            }
+            .icon{
+                color:black;
+            }
+            .button{
+                background-image: linear-gradient(272deg, #858f99, #202326);
+                border: whitesmoke;
+                color: white;
+            }
+        }
+        p{
+            margin: 0px;
+        }
+    }
+}
+.navbar-brand{
+    display: flex !important;
+}
+a.navbar-item{
+    text-decoration: none;
+    color:white;
+}
+a.navbar-item:hover{
+    color:#018378;
+    background-color: transparent;
+    text-decoration: none;
+} 
+
+.is-register{
+    text-decoration: none;
+    text-align: center;
+    width: 101px;
+    height: 36px;
+    border-radius: 4px;
+    border-radius: 5px;
+    background-image: linear-gradient(to right, #007eac, #0095b0);
+    padding: 6px 20px;
+    border:none;
+    color: white !important;
+}
+.is-login{
+    text-decoration: none;
+    text-align: center;
+    margin-right: 10px;
+    width: auto;
+    height: 36px;
+    border-radius: 4px;
+    border-radius: 5px;
+    border:solid 1px #384a9f;
+}
+.is-login:hover{
+    font-weight: bold;
+}
+.is-register:hover{
+    background-image: linear-gradient(to left, #007eac, #0095b0);
+}
+.navbar-custom{
+    background: white !important;
+    transition: 0.4s;
+    a.navbar-item{
+        color:black;
+    }
+
+    a.navbar-item:hover{
+        color:#018378;
+    }
+}
+.navbar-blue{
+    background:#384a9f !important;
+    transition: 0.4s;
+}
+a.navbar-item:active{
+    color:#19c5c5;
+}
+#Home{
+    background: url('/src/assets/images/background.png');
+    background-size: cover;
+    color: white;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    max-width: 1506px;
+    margin: auto;
+    h1{
+        color: white;
+    }
+    .background{
+        width: 100%;
+        position: absolute;
+        top: 0px;
+        z-index: 0;
+        max-width: 1506px;
+
+    }
+    .columns{
+        .column{
+            align-self: center;
+            margin: 90px;
+        }
+    }
+}
+
+.btn-custom{
+    color: white;
+   text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-image: linear-gradient(to right, #007eac, #0095b0);
+ background-size: 102%;
+    background-position-x: center;  
+}
+.btn-custom:hover{
+    color: white;
+    background-image: linear-gradient(to left, #007eac, #0095b0);
+}
+.btn-view{
+    width: 171px;
+    height: 44px;
+    border-radius: 5px;
+    background-color: #F5f5f5;    
+    border: solid 2px #018e97 !important;
+    color: #018e97;
+    margin: auto;
+}
+.btn-view:hover{
+    background-color: #018e97;
+    color: white;
+}
+.btn-event{
+    width: 228px;
+}
+
+.custom-columns {
+    flex-direction: column-reverse;
+    display: flex;
+  }
+
+  #OurServices{
+      text-align: center;
+      background-color: transparent;
+      h4{
+        font-size: 16px;
+        opacity: 0.7;
+      }
+      p{
+        font-size: 14px;
+        opacity: 0.7;
+      }
+      .card-content{
+          padding: 80px 60px;
+      }
+      .card{
+          border-radius: 10px;
+      }
+  }
+
+  #About{
+    background-color: #f5f5f5;
+    .container{
+        padding: 150px 0px;
+        align-items: center;
+    }
+
+    .section-subheading{
+        text-align: justify;
+    }
+    
+  }
+  #Events{
+    background-color: #f5f5f5;
+    .titleSection{
+        text-align: center;
+
+    }
+    .eventImage a .name {
+        top: 0px;
+        left: -100%;
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease-in-out;
+        -o-transition: all 0.3s ease-in-out;
+        -ms-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .eventImage a .name span {
+        display: block;
+        padding: 10px 0;
+        margin: 40px 20px 20px 20px;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+        text-transform: uppercase;
+        font-weight: normal;
+        color: rgba(255,255,255,0.9);
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    }
+    .eventImage a:hover .name{
+        left: 0px;
+    }
+
+    .eventImage a,
+    .eventImage a img {
+        display: block;
+        position: relative;
+    }
+
+    .eventImage a {
+        overflow: hidden !important;
+    }
+
+    .eventImage .name {
+        position: absolute;
+        background: #333;
+        background: rgba(75,75,75,0.7);
+        width: 100%;
+        height: 100%;
+        margin: auto;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    .eventImage.ng-enter {
+        animation: 1s linear added;
+    }
+    
+    .eventImage.ng-leave {
+    animation: 1s linear deleted;
+    }
+    .event-button{
+        text-align: center;
+    }
+  }
+
+  #Contact{
+      background-color:#384a9f;
+      padding-bottom: 1px;
+      color: white;
+      position: relative;
+      h1,h2,h3,h4,p{
+          color: white;
+      }
+      .yesplisDetail{
+          display: flex;
+          .icon{
+            max-width: 16px;
+            margin-left: 20px;
+            margin-right: 20px;
+          }
+      }
+  }
+
+  #footer{
+    padding: 1px;
+    background-color:#384a9f;
+    border: none;
+    color: white;
+    position: relative;
+  }
+  #loginLayout{
+    background-color: #f5f5f5;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    hr{
+        margin: 0px;
+    }
+    .btn-custom{
+        width: 100%;
+        padding: 0px;
+    }
+    .control{
+        width: 100%;
+    }
+  }
+
+  #navbarHome{
+      .active{
+          color: #19c5c5;
+      }
+  }
+#TicketList{
+    text-align: center;
+    img{
+        width: 100%;
+        max-width: 200px;
+    }
+    td p{
+        margin: 0px;
+    }
+    table, tr,td{
+        border: none;
+        padding: 0px;
+    }
+    .qrcode{
+        font-weight: bold;
+        font-size: 20px;
+        margin-bottom: 0px;
+    }
+    .box{
+        width: 100%;
+        max-width: 250px;
+    }
+}
+  #EventList{
+      td p{
+          margin: 0px;
+      }
+      table, tr,td{
+          border: none;
+          padding: 0px;
+      }
+    .box{
+        position:relative;
+        overflow: hidden;
+        max-width: 300px;
+        margin: auto;
+        img{
+            position: absolute;
+            top: 0px;
+            right: 0;
+            left: 0;
+            z-index: 0;
+            max-width: 300px;
+        }
+        hr{
+            color: #e7e7e7;
+            height: 1px;
+        }
+        .barticket{
+            background-color: #eeeeef;
+            height: 10px;
+            border-radius: 30px;
+            overflow: hidden;
+            .colorbar{
+                background: #32bdca;
+                width: 50%;
+                height: 10px;
+            }
+        }
+        .row{
+            display: flex;
+        }
+        .total{
+            margin-left: auto;
+        }
+    }
+    .tag{
+        position: relative;
+        float: right;
+        -webkit-transform: rotate(39deg);
+        transform: rotate(39deg);
+        font-size: 17px;
+        right: -50px;
+        width: 159px;
+        z-index: 1;
+    }
+    .tanggalMulai{
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 0.2px;
+        color: #2a3fb2;
+    }
+    .namaevent{
+        padding-top: 180px;
+        font-family: Roboto;
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.38;
+        color: #333333;
+    }
+    .tempatEvent{
+        font-family: Roboto;
+        font-size: 13px;
+        line-height: 1.46;
+        letter-spacing: 0.2px;
+        color: #acacb0;
+    }
+
+    .box-upload{
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+        height: 300px;
+        background: white;
+        border-radius: 6px;
+        padding: 40px 0px;
+        box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+    }
+    
+    .circle-custom{
+        height: 150px;
+        width: 150px;
+        background: #cdcdcf;
+        margin: 12px auto;
+        border-radius: 80px;
+        padding: 1px;
+    }
+}
+.box-ticket{
+    display: flex;
+    position: relative;
+    border: solid 1px #e7e7e7;
+    border-radius: 3px;
+    padding: 10px 15px;
+    align-items: center;
+    margin-top: 10px;
+    p{
+        margin: 0px;
+    }
+    .aktifbutton{
+        background: transparent;
+        border: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 0;
+        padding: 0;
+    }
+    .aktif{
+        color: green;
+    }
+    .nonaktif{
+        color: red;
+    }
+}
+#paynow{
+    
+    table,tr,td{
+        border: none;
+        color: black;
+        font-weight: bold;
+        font-family: Roboto;
+        font-size: 14px;
+    }
+    tr{
+        td:nth-child(2){
+            text-align: right;
+        }
+    }
+    .atm{
+        width: 80px;
+        margin-left: auto;
+    }
+    // .is-countdown{
+    //     border-radius: 4px;
+    //     background-color: rgba(1, 142, 151, 0.16);
+    //     color: #018e97;
+    //     h1{
+    //     color: #018e97;
+    //     font-size: 3.5rem;
+    //     }
+    // }
+    // .is-expired{
+    //     background-color: rgba(245, 21, 21, 0.16);
+    //     color: #ee4646;
+    //     h1{
+    //     color: #ee4646;
+    //     font-size: 3.5rem;
+    //     }
+    // }
+    // .is-copy{
+    //     border-radius: 3px;
+    //     background-color: #d7edef;
+    //     color: #018e97;
+    //     text-align: center;
+    // }
+    // .is-Success{
+    //     background-color: #acffba !important;
+    //     color: #0cba54 !important;
+    // }
+    // .is-notifPayment{
+    //     border-radius: 4px;
+    //     background-color: #ffdfac;
+    //     font-family: Roboto;
+    //     font-size: 14px;
+    //     color: #de8f0e;
+    // }
+    button{
+        width: 100%;
+        height: 40px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+    .btn-transaction{
+        color: #018e97;
+        border: solid 1px #049aa3;
+    }
+    .btn-confirm{
+        color: white;
+        background-image: linear-gradient(to right, #007eac, #0095b0);
+    }
+    .btn-transaction:hover{
+        border: solid 3px #049aa3;
+    }
+    .btn-confirm:hover{
+        background-image: linear-gradient(to left, #007eac, #0095b0);        
+    }
+}
