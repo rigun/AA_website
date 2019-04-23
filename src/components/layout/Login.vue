@@ -1,9 +1,10 @@
 <template>
   <div id="loginLayout">
+    <div class="background-all"></div>
     <nav id="mainNav" class="navbar navbar-blue" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <router-link :to="{name:'Landing'}" class="navbar-item" >
-                     <img class="show-logo" :src="require(`@/assets/logo.png`)" style="width: 100%;">
+                     <img class="show-logo" :src="require(`@/assets/logo.png`)" style="width: auto;">
                 </router-link>
             </div>
         </nav>
@@ -42,6 +43,7 @@
                             :error="error"
                             :error-messages="message"
                             @click:append="showpassword = !showpassword"
+                            @keyup.enter="submitLogin(); load =true"
                             v-model="password"
                         ></v-text-field>
 
@@ -82,7 +84,6 @@
 </template>
 <script>
 import store from '../../store'
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -111,7 +112,7 @@ export default {
     },
     submitLogin () {
       this.loginError = false
-      axios.post(this.$apiUrl + '/auth/login', {
+      this.$http.post(this.$apiUrl + 'auth/login', {
         email: this.email,
         password: this.password
       }).then(response => {

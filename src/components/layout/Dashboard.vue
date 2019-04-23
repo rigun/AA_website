@@ -15,11 +15,6 @@
                     </div>
                 </div>
                 <div class="navbar-end">
-                        <div class="navbar-item notif-space" v-if="roles == 'superadministrator'">
-                            <router-link v-bind:to="{name: 'confirmPayment'}" style="text-decoration: none; color: black"><i class="fa fa-bell"></i></router-link>
-                            <div class="notifRed" v-if="count>0">{{count}}</div>
-                            
-                        </div>
                         <div class="navbar-item dropdown-space has-dropdown is-hoverable">
                             
                         <div class="navbar-item" style="display:flex">
@@ -28,7 +23,7 @@
                             </div>
                             <div id="textRightNav" class="text-item" @click.prevent="rightDropDown()">
                                 <h2 class="name-text">
-                                <strong>{{user.role.name}}
+                                <strong>{{name}}
                                     </strong>
                                 </h2>
                                 <p class="mute-text" >
@@ -70,8 +65,8 @@
                 
                     <ul class="menu-list dashboardlist">
                         <li><router-link v-bind:to="{name: 'DashboardContent'}"><v-icon dark style="margin-right: 5px;">dashboard</v-icon>  <span>Dashboard</span> </router-link></li>
-                        <li><router-link v-bind:to="{name: 'branches'}"><v-icon dark style="margin-right: 5px;">dashboard</v-icon>  <span>Cabang</span> </router-link></li>
-                        <li><router-link v-bind:to="{name: 'manageSupplier'}"><v-icon dark style="margin-right: 5px;">dashboard</v-icon>  <span>Supplier</span> </router-link></li>
+                        <li><router-link v-bind:to="{name: 'branches'}"><v-icon dark style="margin-right: 5px;">call_split</v-icon>  <span>Cabang</span> </router-link></li>
+                        <li><router-link v-bind:to="{name: 'manageSupplier'}"><v-icon dark style="margin-right: 5px;">business</v-icon>  <span>Supplier</span> </router-link></li>
                     </ul>
                 </div>
             </aside>
@@ -103,7 +98,6 @@
 </style>
 <script>
 import { vueTopprogress } from 'vue-top-progress'
-import axios from 'axios'
 export default {
   components: {
     vueTopprogress
@@ -115,26 +109,20 @@ export default {
       error: '',
       loading: true,
       roles: localStorage.getItem('roles'),
+      name: localStorage.getItem('name'),
       activeFirst: false,
       wrongPassword: false,
       leftNav: false,
-      showDropDown: false,
-      first: 0,
-      count: 0
+      showDropDown: false
     }
   },
   mounted () {
-    this.$refs.topProgress.start()
-    // if(localStorage.getItem('roles') === 'participant'){
-    //     this.$router.push({ name: 'Logout' })
-    // }else{
     this.getUser()
-    // }
   },
   computed: {
     inisial () {
       var initials = ''
-      var names = this.user.role.name.split(' ')
+      var names = this.name.split(' ')
       for (let n = 0; n < 2; n++) {
         if (n < names.length) {
           initials += names[n].substring(0, 1).toUpperCase()
@@ -151,7 +139,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      axios.get(uri, config).then(response => {
+      this.$http.get(uri, config).then(response => {
         this.count = response.data
       })
     },
@@ -170,7 +158,12 @@ export default {
       }
     },
     getUser () {
-      axios.get(this.$apiUrl + '/user', {
+      if (localStorage.getItem('name') !== null) {
+        this.loading = false
+        return
+      }
+      this.$refs.topProgress.start()
+      this.$http.get(this.$apiUrl + 'user', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
@@ -181,9 +174,9 @@ export default {
           this.$router.push({ name: 'Logout' })
         } else {
           this.user = response.data.userdata
-          this.$nextTick(function () {
-            // this.getCount()
-          })
+          this.name = response.data.userdata.role.name
+          localStorage.setItem('name', this.user.role.name)
+          localStorage.setItem('id', this.user.id)
         }
       }).catch(error => {
         console.log(error)

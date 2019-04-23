@@ -13,7 +13,7 @@
           </div>
           <div class="background-text-main">
             <p class="note-main-info">Konsumen</p>
-            <p class="number-main">0</p>
+            <p class="number-main">{{dashboardData.konsumen}}</p>
           </div>
         </div>
       </div>
@@ -26,7 +26,7 @@
           </div>
           <div class="background-text-main">
             <p class="note-main-info">Supplier</p>
-            <p class="number-main">0</p>
+            <p class="number-main">{{dashboardData.supplier}}</p>
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
           </div>
           <div class="background-text-main">
             <p class="note-main-info">Pegawai</p>
-            <p class="number-main">0</p>
+            <p class="number-main">{{dashboardData.pegawai}}</p>
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@
           </div>
           <div class="background-text-main" >
             <p class="note-main-info">Varian kendaraan</p>
-            <p class="number-main">0</p>
+            <p class="number-main">{{dashboardData.kendaraan}}</p>
           </div>
         </div>
       </div>
@@ -182,8 +182,8 @@
                 <v-card-text>Data yang dihapus tidak akan bisa dikembalikan lagi</v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" flat @click="resetData()">Batal</v-btn>
-                  <v-btn color="red darken-1" flat @click="deleteData()">Hapus</v-btn>
+                  <v-btn color="green darken-1" dark @click="resetData()">Batal</v-btn>
+                  <v-btn color="red darken-1" dark :loading="load" @click="deleteData()">Hapus</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -199,7 +199,6 @@
 </style>
 
 <script>
-import axios from 'axios'
 export default {
   mounted () {
     this.getData('service')
@@ -214,7 +213,12 @@ export default {
       text: '',
       services: [],
       vehicles: [],
-      dashboard: {},
+      dashboardData: {
+        kendaraan: 0,
+        pegawai: 0,
+        supplier: 0,
+        konsumen: 0
+      },
       editData: {
         id: -1,
         merk: '',
@@ -281,8 +285,8 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + this.inputCat
-      axios.post(uri, this.editData, config).then(response => {
+      uri = this.$apiUrl + '' + this.inputCat
+      this.$http.post(uri, this.editData, config).then(response => {
         this.getData(this.inputCat)
         this.resetData()
       }).catch(error => {
@@ -290,6 +294,7 @@ export default {
         this.snackbar = true
         this.text = 'Terjadi kesalahan'
         this.color = 'error'
+        this.load = false
       })
     },
     UpdateData () {
@@ -306,8 +311,8 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + this.inputCat + '/' + this.editData.id
-      axios.post(uri, this.editData, config).then(response => {
+      uri = this.$apiUrl + '' + this.inputCat + '/' + this.editData.id
+      this.$http.post(uri, this.editData, config).then(response => {
         this.getData(this.inputCat)
         this.resetData()
       }).catch(error => {
@@ -315,16 +320,18 @@ export default {
         this.snackbar = true
         this.text = 'Terjadi kesalahan'
         this.color = 'error'
+        this.load = false
       })
     },
     deleteData () {
+      this.load = true
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      var uri = this.$apiUrl + this.inputCat + '/' + this.editData.id
-      axios.delete(uri, config).then(response => {
+      var uri = this.$apiUrl + '' + this.inputCat + '/' + this.editData.id
+      this.$http.delete(uri, config).then(response => {
         this.snackbar = true
         this.text = 'Data berhasil dihapus'
         this.color = 'green'
@@ -335,6 +342,7 @@ export default {
         this.snackbar = true
         this.text = 'Coba Lagi'
         this.color = 'red'
+        this.load = false
       })
     },
     getData (category) {
@@ -344,17 +352,27 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + category
-      axios.get(uri, config).then(response => {
+      uri = this.$apiUrl + '' + category
+      this.$http.get(uri, config).then(response => {
         if (category === 'service') {
           this.services = response.data
         } else {
           this.vehicles = response.data
         }
+        this.getDashboard()
       })
     },
     getDashboard () {
-      console.log('dashboard')
+      var vm = this
+      this.$http.get(this.$apiUrl + 'dashboard', {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      }).then(response => {
+        vm.dashboardData = response.data
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }

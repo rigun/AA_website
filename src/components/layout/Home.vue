@@ -3,7 +3,7 @@
        <nav id="mainNav" class="navbar" :class="{'navbar-custom': isnavbar }" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <router-link :to="{name:'Landing'}" class="navbar-item" >
-                     <img class="show-logo" :src="require(`@/assets/${logo}`)" style="width: 100%;">
+                     <img class="show-logo" :src="require(`@/assets/${logo}`)" style="width: auto;">
                 </router-link>
                  <a role="button" class="navbar-burger burger" @click.prevent="showMenu = !showMenu">
                 <span aria-hidden="true"></span>
@@ -210,7 +210,6 @@ margin: auto;
 
 
 <script>
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -259,7 +258,7 @@ export default {
       }
     },
     getUser () {
-      axios.get(this.$apiUrl + '/user', {
+      this.$http.get(this.$apiUrl + 'user', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }

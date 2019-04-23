@@ -36,19 +36,20 @@
             <template slot-scope="props">
                 <b-table-column label="No." sortable>{{ props.index + 1 }}</b-table-column>
                 <b-table-column field="code" label="Kode" sortable>{{ props.row.code }}</b-table-column>
+                <b-table-column field="picture" label="Foto" sortable>
+                            <img :src="$apiUrl + 'images/sparepart/' + props.row.picture" alt="Foto Sparepart" width="100">
+                </b-table-column>
                 <b-table-column field="name" label="Nama" sortable>{{ props.row.name }}</b-table-column>
                 <b-table-column field="merk" label="Merk" sortable>{{ props.row.merk }}</b-table-column>
                 <b-table-column field="type" label="Tipe" sortable>{{ props.row.type }}</b-table-column>
-                <b-table-column label="Motor" centered>
-                      <v-layout warp row>
-                        <v-flex xs12 v-for="vehicle in props.row.vehicle" :key="vehicle.id">
-                            
+                 <b-table-column label="Motor" centered>
+                      <v-layout warp v-for="vehicle in props.row.vehicle" :key="vehicle.id">
+                        <v-flex xs12 >
                             <v-chip color="teal" dark >
                               {{vehicle.merk}} {{vehicle.type}}
                             </v-chip>
                         </v-flex>
                       </v-layout>
-
                 </b-table-column>
                 <b-table-column label="Dibuat pada" sortable >{{props.row.created_at }}</b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
@@ -114,7 +115,8 @@
                                     <v-layout wrap>
                                       <v-flex xs12 v-show="cropped == null">
                                         <div class="uploadbox" >
-                                          <img :src="require('@/assets/images/uploadyourimage.jpg')" alt="Upload Foto Sparepart" width="300">
+                                          <img :src="require('@/assets/images/uploadyourimage.jpg')" alt="Upload Foto Sparepart" width="300" v-if="typeInput == 'new'">
+                                          <img :src="$apiUrl + 'images/sparepart/' + editData.picture" alt="Upload Foto Sparepart" width="300" v-if="typeInput == 'edit'">
                                           <input type="file" class="uploadButton" accept="image/png, image/jpeg, image/gif, image/jpg"
                                               @change="uploadImg($event, 1)">
                                         </div>
@@ -164,8 +166,8 @@
                                 <v-card-actions>
                                   <v-spacer></v-spacer>
                                   <v-btn color="red darken-1" dark @click.prevent="editDialog = false; resetData()">Batal</v-btn>
-                                  <v-btn color="green darken-1" dark v-if="typeInput == 'new'" @click.prevent="SendData()" :loading="loading">Tambahkan</v-btn>
-                                  <v-btn color="orange darken-1" dark v-if="typeInput == 'edit'" @click.prevent="UpdateData()" :loading="loading">Perbaharui</v-btn>
+                                  <v-btn color="green darken-1" dark v-if="typeInput == 'new'" @click.prevent="cropData()" :loading="loading">Tambahkan</v-btn>
+                                  <v-btn color="orange darken-1" dark v-if="typeInput == 'edit'" @click.prevent="cropData()" :loading="loading">Perbaharui</v-btn>
                                 </v-card-actions>
                               </v-card>
                                 </v-form>
@@ -203,7 +205,6 @@
 </style>
 
 <script>
-import axios from 'axios'
 export default {
   mounted () {
     this.getData()
@@ -266,14 +267,32 @@ export default {
     sparepartList () {
       if (this.spareparts.length) {
         return this.spareparts.filter((row, index) => {
+          if (this.search !== '') return row.name.toLowerCase().includes(this.search.toLowerCase()) || row.code.toLowerCase().includes(this.search.toLowerCase())
           return true
         })
       }
     }
   },
   methods: {
+    cropData () {
+      if (this.changeImg === 1) {
+        let options = {
+          type: 'base64',
+          format: 'png'
+        }
+        this.$refs.croppieRef.result(options, (output) => {
+          this.editData.picture = output
+        })
+      }
+      this.$nextTick(function () {
+        if (this.typeInput === 'edit') {
+          this.UpdateData()
+        } else {
+          this.SendData()
+        }
+      })
+    },
     uploadImg (e, num) {
-      this.imgChange = 1
       var file = e.target.files[0]
       if (!/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(e.target.value)) {
         alert('Anda hanya diperbolehkan mengupload foto/gambar')
@@ -297,7 +316,6 @@ export default {
     },
     result (output) {
       console.log('result')
-      // this.cropped = output
     },
     getVehicle () {
       var uri
@@ -307,7 +325,7 @@ export default {
         }
       }
       uri = this.$apiUrl + 'vehicle'
-      axios.get(uri, config).then(response => {
+      this.$http.get(uri, config).then(response => {
         this.vehicles = response.data
         for (let i = 0; i < this.vehicles.length; i++) {
           this.vehicles[i].name = this.vehicles[i].merk + ' ' + this.vehicles[i].type
@@ -327,7 +345,7 @@ export default {
         }
       }
       uri = this.$apiUrl + 'sparepartIsUnique'
-      axios.post(uri, {code: this.editData.code}, config).then(response => {
+      this.$http.post(uri, {code: this.editData.code}, config).then(response => {
         console.log(response)
         if (response.data === 1) {
           this.unique = false
@@ -348,10 +366,11 @@ export default {
       this.editData.name = data.name
       this.editData.merk = data.merk
       this.editData.type = data.type
-      this.editData.vehicles = data.vehicle
-      for (let i = 0; i < this.editData.vehicles.length; i++) {
-        this.editData.vehicles[i].name = this.editData.vehicles[i].merk + ' ' + this.editData.vehicles[i].type
+      for (let i = 0; i < data.vehicle.length; i++) {
+        this.editData.vehicles.push(data.vehicle[i].id)
       }
+      this.editData.picture = data.picture
+      this.changeImg = 0
     },
     resetData () {
       this.loading = false
@@ -368,7 +387,7 @@ export default {
         }
       }
       var uri = this.$apiUrl + 'sparepart/' + this.editData.code
-      axios.delete(uri, config).then(response => {
+      this.$http.delete(uri, config).then(response => {
         this.snackbar = true
         this.text = 'Data berhasil dihapus'
         this.color = 'green'
@@ -377,8 +396,8 @@ export default {
       }).catch(error => {
         console.log(error)
         this.snackbar = true
-        this.text = 'Coba Lagi'
         this.color = 'red'
+        this.text = 'Coba Lagi'
         this.resetData()
       })
     },
@@ -401,12 +420,6 @@ export default {
         this.color = 'error'
         return
       }
-      let options = {
-        format: 'png'
-      }
-      this.$refs.croppieRef.result(options, (output) => {
-        this.editData.picture = output
-      })
       this.loading = true
       var uri
       var config = {
@@ -417,7 +430,7 @@ export default {
       }
       this.prepareFields()
       uri = this.$apiUrl + 'sparepart'
-      axios.post(uri, this.data, config).then(response => {
+      this.$http.post(uri, this.data, config).then(response => {
         this.resetData()
         this.getData()
       }).catch(error => {
@@ -437,6 +450,7 @@ export default {
       }
       this.data.append('supplier_id', this.$route.params.id)
       this.data.append('picture', this.editData.picture)
+      this.data.append('changeImg', this.changeImg)
     },
     UpdateData () {
       if (!this.$refs.form.validate()) {
@@ -460,8 +474,7 @@ export default {
       }
       this.prepareFields()
       uri = this.$apiUrl + 'sparepart/' + this.editData.code
-      // this.editData.supplier_id = this.$route.params.id
-      axios.post(uri, this.data, config).then(response => {
+      this.$http.post(uri, this.data, config).then(response => {
         this.resetData()
         this.getData()
       }).catch(error => {
@@ -481,7 +494,7 @@ export default {
         }
       }
       uri = this.$apiUrl + 'sparepartBySupplier/' + this.$route.params.id
-      axios.get(uri, config).then(response => {
+      this.$http.get(uri, config).then(response => {
         this.spareparts = response.data
         this.loadData = false
       })

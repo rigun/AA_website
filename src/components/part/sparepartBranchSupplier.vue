@@ -1,14 +1,26 @@
 <template id="admin-list">
 <div class="contentlist">
 <div class="flex-container" >
-
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li>
+                <router-link v-bind:to="{name: 'branchD3'}">Transaction</router-link>
+            </li>
+            <li>
+                <router-link v-bind:to="{name: 'listSupplierBranch'}">
+                    Supplier
+                </router-link>
+            </li>
+            <li class="is-active"><a href="#">{{supplier.name}}</a></li>
+        </ul>
+        </nav>
       <div class="columns m-t-10">
         <div class="column">
           <h1 class="title">Daftar Sparepart</h1>
         </div>
         <div class="column">
             <v-flex sm6 d-flex style="margin-left: auto">
-              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="editDialog = true; typeInput = 'new'">Tambah Sparepart</v-btn>
+              <v-btn slot="activator" color="blue lighten-2" dark >Cetak Surat Pemesanan</v-btn>
             </v-flex>
         </div>
       </div>
@@ -32,37 +44,28 @@
                     </b-field>
                  </div>
            </nav>
-        <b-table :data="sparepartList" :paginated="true" :per-page="perPage" :current-page.sync="currentPage" :loading="loadData" :pagination-simple="true" :narrowed="true" :mobile-cards="true" :striped="true" :hoverable="true" :default-sort-direction="defaultSortDirection" default-sort="created_at">
+        <b-table :data="sparepartList" :paginated="true" :per-page="perPage" :current-page.sync="currentPage" :loading="loadData" :pagination-simple="true" :narrowed="true" :mobile-cards="true" :striped="true" :hoverable="true" :default-sort-direction="defaultSortDirection" default-sort="stock">
             <template slot-scope="props">
                 <b-table-column label="No." sortable>{{ props.index + 1 }}</b-table-column>
-                <b-table-column field="code" label="Kode" sortable>{{ props.row.sparepart.code }}</b-table-column>
+                <b-table-column field="code" label="Kode" sortable>{{ props.row.data.sparepart.code }}</b-table-column>
                 <b-table-column field="picture" label="Foto" sortable>
-                            <img :src="$apiUrl + 'images/sparepart/' + props.row.sparepart.picture" alt="Foto Sparepart" width="100">
+                            <img :src="$apiUrl + 'images/sparepart/' + props.row.data.sparepart.picture" alt="Foto Sparepart" width="100">
                 </b-table-column>
-                <b-table-column field="name" label="Nama" sortable>{{ props.row.sparepart.name }}</b-table-column>
-                <b-table-column field="merk" label="Merk" sortable>{{ props.row.sparepart.merk }}</b-table-column>
-                <b-table-column field="type" label="Tipe" sortable>{{ props.row.sparepart.type }}</b-table-column>
-                <b-table-column field="position" label="Posisi" sortable>{{ props.row.position }}</b-table-column>
-                <b-table-column label="Motor" centered>
-                      <v-layout warp v-for="vehicle in props.row.sparepart.vehicle" :key="vehicle.id">
-                        <v-flex xs12 >
-                            <v-chip color="teal" dark >
-                              {{vehicle.merk}} {{vehicle.type}}
-                            </v-chip>
-                        </v-flex>
-                      </v-layout>
-                </b-table-column>
-                <b-table-column label="Stock" sortable >{{props.row.stock }}</b-table-column>
-                <b-table-column label="Stock Minimal" sortable >{{props.row.limitstock }}</b-table-column>
-                <b-table-column label="Harga Beli" sortable >{{price(props.row.buy) }}</b-table-column>
-                <b-table-column label="Harga Jual" sortable >{{price(props.row.sell) }}</b-table-column>
-                <b-table-column label="Dibeli pada" sortable >{{props.row.created_at }}</b-table-column>
+                <b-table-column field="name" label="Nama" sortable>{{ props.row.data.sparepart.name }}</b-table-column>
+                <b-table-column field="merk" label="Merk" sortable>{{ props.row.data.sparepart.merk }}</b-table-column>
+                <b-table-column field="type" label="Tipe" sortable>{{ props.row.data.sparepart.type }}</b-table-column>
+                <b-table-column field="position" label="Posisi" sortable>{{ props.row.data.position }}</b-table-column>
+                <b-table-column field="stock" label="Stock" sortable >{{props.row.data.stock }}</b-table-column>
+                <b-table-column label="Stock Minimal" sortable >{{props.row.data.limitstock }}</b-table-column>
+                <b-table-column label="Harga Beli" sortable >{{price(props.row.data.buy) }}</b-table-column>
+                <b-table-column label="Harga Jual" sortable >{{price(props.row.data.sell) }}</b-table-column>
+                <b-table-column label="Jumlah Yang dipesan" sortable >{{props.row.total }}</b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >
                                 <v-icon>more_vert</v-icon>
                                 </v-btn>
                             <v-list>
-                            <v-list-tile  @click.prevent="seteditData(props.row); editDialog = true">
+                            <v-list-tile  @click.prevent="seteditData(props.row.data); editDialog = true">
                                 <v-list-tile-title  >Perbaharui</v-list-tile-title>
                             </v-list-tile>
                             <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true">
@@ -143,42 +146,17 @@
                                         <v-text-field label="Merk Sparepart*" v-model="editData.sparepart.merk" :disabled="true"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        Posisi Sparepart
-                                      </v-flex>
-                                       <v-flex xs4>
-                                           <v-select
-                                          v-model="editData.letak"
-                                          :items="letak"
-                                          label="Letak"
-                                        ></v-select>
-                                      </v-flex>
-                                       <v-flex xs4>
-                                           <v-select
-                                          v-model="editData.rak"
-                                          :items="rak"
-                                          label="Rak"
-                                        ></v-select>
-                                      </v-flex>
-                                       <v-flex xs4>
-                                           <v-select
-                                          v-model="editData.urut"
-                                          :items="urut"
-                                          label="Nomor Urut"
-                                        ></v-select>
+                                        <v-text-field type="text" label="Stock Saat Ini"  :disabled="true" v-model="editData.stock"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        <v-text-field type="text" label="Stock Saat Ini*" :rules="[rules.required,rules.numberOnly]" v-model="editData.stock"></v-text-field>
+                                        <v-text-field type="text" label="Stock Minimal Sparepart" :disabled="true" v-model="editData.limitstock"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        <v-text-field type="text" label="Stock Minimal Sparepart*" :rules="[rules.required,rules.numberOnly]" v-model="editData.limitstock"></v-text-field>
+                                        <v-text-field type="text" label="Jumlah pesanan" :rules="[rules.required,rules.numberOnly]" v-model="editData.total"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        <v-text-field type="text" label="Harga Beli (Rp)*" :rules="[rules.required,rules.numberOnly]" v-model="editData.buy"></v-text-field>
+                                        <v-text-field type="text" label="Satuan Barang" :rules="[rules.required,rules.textOnly]" v-model="editData.unit"></v-text-field>
                                       </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field type="text" label="Harga Jual (Rp)*" :rules="[rules.required,rules.numberOnly]" v-model="editData.sell"></v-text-field>
-                                      </v-flex>
-                                     
                                     </v-layout>
                                   </v-container>
                                   <small>*Wajib diisi</small>
@@ -216,13 +194,17 @@
 <script>
 export default {
   mounted () {
-    this.$parent.tab = 'branchD2'
+    this.$parent.tab = 'branchD5'
     this.getData()
     this.getSparepart()
     this.setUrut()
+    this.getSupplier()
   },
   data () {
     return {
+      supplier: {
+        name: ''
+      },
       errorSparepart: '',
       valid: true,
       typeInput: 'new',
@@ -261,7 +243,7 @@ export default {
       loadData: true,
       isPaginated: true,
       isPaginationSimple: true,
-      defaultSortDirection: 'desc',
+      defaultSortDirection: 'asc',
       currentPage: 1,
       perPage: 10,
       roles: [],
@@ -293,6 +275,17 @@ export default {
     }
   },
   methods: {
+    getSupplier () {
+      var config = {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      }
+      var uri = this.$apiUrl + 'person/' + this.$route.params.supplierId
+      this.$http.get(uri, config).then(response => {
+        this.supplier = response.data.result
+      })
+    },
     cekSparepartCode () {
       var sparepart = this.branchSpareprats.filter((row, index) => {
         if (row.sparepart.code === this.editData.sparepart.code) {
@@ -455,18 +448,12 @@ export default {
         this.color = 'red'
         return
       }
-      this.editData.position = this.editData.letak + '-' + this.editData.rak + '-' + this.editData.urut
-      // var positionSparepart = this.branchSpareprats.filter((row, index) => {
-      //   if (row.position === this.editData.position) {
-      //     return true
-      //   }
-      // })
-      // if (positionSparepart.length > 1) {
-      //   this.snackbar = true
-      //   this.text = 'Mohon maaf, tempat sudah terisi, silahkan memilih posisi yang lain'
-      //   this.color = 'red'
-      //   return
-      // }
+      if (parseInt(this.editData.total) + parseInt(this.editData.stock) <= this.editData.limitstock) {
+        this.snackbar = true
+        this.text = 'Mohon maaf, barang yang dipesan masih di bawah stock minimal'
+        this.color = 'red'
+        return
+      }
       this.loading = true
       var uri
       var config = {
@@ -474,10 +461,11 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
+      this.editData.supplier_id = this.supplier.id
+      this.editData.branch_id = this.$route.params.id
       this.editData.sparepart_code = this.editData.sparepart.code
-      uri = this.$apiUrl + 'sparepartBranch/' + this.editData.id
-      this.editData.people_id = this.$route.params.id
-      this.$http.patch(uri, this.editData, config).then(response => {
+      uri = this.$apiUrl + 'order'
+      this.$http.post(uri, this.editData, config).then(response => {
         this.resetData()
         this.getData()
       }).catch(error => {
@@ -496,7 +484,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + 'sparepartBranch/' + this.$route.params.id
+      uri = this.$apiUrl + 'sparepartBS/' + this.$route.params.supplierId + '/' + this.$route.params.id
       this.$http.get(uri, config).then(response => {
         this.branchSpareprats = response.data
         this.loadData = false

@@ -148,7 +148,6 @@
    </div>
 </template>
 <script>
-import axios from 'axios'
 export default {
   mounted () {
     this.getData('service')
@@ -185,7 +184,7 @@ export default {
         }
       }
       uri = this.$apiUrl + category
-      axios.get(uri, config).then(response => {
+      this.$http.get(uri, config).then(response => {
         if (category === 'service') {
           this.services = response.data
         } else {

@@ -91,6 +91,10 @@
 
         <!-- edit -->
          <v-layout row justify-center>
+           <v-form
+                ref="form"
+                lazy-validation
+            >
             <v-dialog v-model="editDialog" persistent max-width="600px">
               <v-card>
                 <v-card-title>
@@ -108,12 +112,13 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="red darken-1" dark @click="editDialog = false">Batal</v-btn>
+                  <v-btn color="red darken-1" dark @click="resetData()">Batal</v-btn>
                   <v-btn color="blue darken-1" v-if="typeInput == 'new'" dark @click.prevent="sendData()" :loading="load">Tambahkan</v-btn>
                   <v-btn color="blue darken-1" v-if="typeInput == 'edit'" dark @click.prevent="UpdateData()" :loading="load">Update</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
+           </v-form>
           </v-layout>
         <!-- edit -->
         <!-- delete -->
@@ -124,8 +129,8 @@
                       <v-card-text>Cabang yang dihapus akan juga menghapus seluruh data didalamnya dan tidak dapat dikembalikan lagi.</v-card-text>
                       <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" dark @click="deleteDialog = false; deleteId = -1">Batal</v-btn>
-                        <v-btn color="red darken-1" dark @click="deleteDialog = false; deleteData()">Hapus</v-btn>
+                        <v-btn color="green darken-1" dark @click="resetData()">Batal</v-btn>
+                        <v-btn color="red darken-1" dark :loading="load" @click="deleteData()">Hapus</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -136,7 +141,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   mounted () {
     this.getBranch()
@@ -169,28 +173,32 @@ export default {
       currentPage: 1,
       perPage: 10,
       roles: [],
-      branches: [{
-        employee: [],
-        spareparts: [],
-        transaction: []
-      }]
+      branches: []
     }
   },
   computed: {
     branchesList () {
       if (this.branches.length) {
         return this.branches.filter((row, index) => {
+          if (this.search !== '') return row.name.toLowerCase().includes(this.search.toLowerCase())
           return true
         })
       }
     }
   },
   methods: {
+    resetData () {
+      this.deleteDialog = false
+      this.deleteId = -1
+      this.$refs.form.reset()
+      this.editDialog = false
+    },
     goto (id) {
       this.$router.push({name: 'branchD1', params: {id: id}})
     },
     getBranch () {
       this.editDialog = false
+      this.deleteDialog = false
       this.load = false
       var uri
       var config = {
@@ -199,7 +207,8 @@ export default {
         }
       }
       uri = this.$apiUrl + 'branch'
-      axios.get(uri, config).then(response => {
+      this.$http.get(uri, config).then(response => {
+        this.$refs.form.reset()
         this.branches = response.data
         this.loadData = false
       })
@@ -213,7 +222,7 @@ export default {
         }
       }
       uri = this.$apiUrl + 'branch'
-      axios.post(uri, this.editData, config).then(response => {
+      this.$http.post(uri, this.editData, config).then(response => {
         console.log(response)
         this.getBranch()
       }).catch(error => {
@@ -229,13 +238,14 @@ export default {
       this.editData.name = data.name
     },
     deleteData () {
+      this.load = true
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
       var uri = this.$apiUrl + 'branch/' + this.deleteId
-      axios.delete(uri, config).then(response => {
+      this.$http.delete(uri, config).then(response => {
         this.snackbar = true
         this.text = 'Data berhasil dihapus'
         this.color = 'green'
@@ -245,7 +255,7 @@ export default {
         this.snackbar = true
         this.text = 'Coba Lagi'
         this.color = 'red'
-        this.getBranch()
+        this.load = false
       })
     },
     UpdateData () {
@@ -257,7 +267,7 @@ export default {
         }
       }
       uri = this.$apiUrl + 'branch/' + this.editData.id
-      axios.post(uri, this.editData, config).then(response => {
+      this.$http.post(uri, this.editData, config).then(response => {
         console.log(response)
         this.getBranch()
       }).catch(error => {
@@ -280,7 +290,7 @@ export default {
       } else {
         user.status = 0
       }
-      axios.patch(uri, { status: user.status }, config).then(response => {
+      this.$http.patch(uri, { status: user.status }, config).then(response => {
         console.log(response)
         // this.getData()
       }).catch(error => {

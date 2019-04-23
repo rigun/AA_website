@@ -38,10 +38,22 @@
                         <span>Sparepart</span>
                     </a>
                     </li>
+                    <li :class="{'is-active': tab == 'branchD3'}">
+                    <a @click.prevent="goto('branchD3')">
+                        <v-icon>check_circle</v-icon>
+                        <span>Transaksi</span>
+                    </a>
+                    </li>
                     <li :class="{'is-active': tab == 'branchD4'}">
                     <a @click.prevent="goto('branchD4')">
                         <v-icon>check_circle</v-icon>
-                        <span>Pemesanan</span>
+                        <span>Pembayaran</span>
+                    </a>
+                    </li>
+                    <li :class="{'is-active': tab == 'branchD5'}">
+                    <a @click.prevent="goto('branchD5')">
+                        <v-icon>check_circle</v-icon>
+                        <span>Pengadaan</span>
                     </a>
                     </li>
                 </ul>
@@ -57,7 +69,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -79,7 +90,8 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      axios.get(this.$apiUrl + 'branch/' + this.$route.params.id, config).then(response => {
+      var uri = this.$apiUrl + 'branch/' + this.$route.params.id
+      this.$http.get(uri, config).then(response => {
         this.branch = response.data.result
       })
     }

@@ -67,9 +67,7 @@
             </div>
     </div>
 </template>
-
 <script>
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -91,7 +89,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      axios.get(this.$apiUrl + 'person/' + this.$route.params.id, config).then(response => {
+      this.$http.get(this.$apiUrl + 'person/' + this.$route.params.id, config).then(response => {
         this.supplier = response.data.result
       })
     }
