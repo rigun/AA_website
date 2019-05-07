@@ -202,6 +202,9 @@
                                         <v-text-field label="Harga Sparepart*" v-model="editData.sparepart.sell" :disabled="true"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
+                                        <v-text-field label="Stock yang tersedia*" v-model="editData.sparepart.stock" :disabled="true"></v-text-field>
+                                      </v-flex>
+                                       <v-flex xs12>
                                         <v-text-field label="Jumlah Sparepart yang dibeli*" required v-model="editData.total" :rules="[rules.required, rules.numberOnly]" @input="countPrice()"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
@@ -532,6 +535,7 @@ export default {
         for (let i = 0; i < this.branchSpareprats.length; i++) {
           this.spareparts.push(this.branchSpareprats[i].sparepart)
           this.spareparts[i].view = this.spareparts[i].code + ' ' + this.spareparts[i].name
+          this.spareparts[i].stock = this.branchSpareprats[i].stock
           this.spareparts[i].price = this.branchSpareprats[i].sell
           this.spareparts[i].sell = this.price(this.branchSpareprats[i].sell)
         }
@@ -587,6 +591,7 @@ export default {
       this.editData.sparepart = data.data.sparepart
       this.editData.sparepart.view = this.editData.sparepart.code + ' ' + this.editData.sparepart.name
       this.editData.sparepart.price = data.data.price
+      this.editData.sparepart.stock = data.stock
       this.editData.total = data.data.total
       this.editData.sparepart.sell = this.price(data.data.price)
       this.countPrice()
@@ -663,6 +668,12 @@ export default {
         this.color = 'red'
         return
       }
+      if (this.editData.sparepart.stock < this.editData.total) {
+        this.snackbar = true
+        this.text = 'Stok tidak mencukupi'
+        this.color = 'red'
+        return
+      }
       this.editData.branch_id = this.$route.params.id
       this.editData.trasanctiondetail_id = this.$route.params.detailId
       this.load = true
@@ -700,6 +711,12 @@ export default {
       if (this.errorSparepart !== '' || this.errorLayanan !== '') {
         this.snackbar = true
         this.text = 'Mohon untuk melengkapi form yang tersedia'
+        this.color = 'red'
+        return
+      }
+      if (this.editData.sparepart.stock < this.editData.total) {
+        this.snackbar = true
+        this.text = 'Stok tidak mencukupi'
         this.color = 'red'
         return
       }

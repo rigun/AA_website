@@ -52,13 +52,13 @@
                                 <v-icon>more_vert</v-icon>
                                 </v-btn>
                             <v-list>
-                            <v-list-tile  @click.prevent="seteditData(props.row.customer); editDialog = true;typeInput = 'edit'">
+                            <v-list-tile  @click.prevent="seteditData(props.row); editDialog = true;typeInput = 'edit'" v-if="props.row.status != 3">
                                 <v-list-tile-title  >Perbaharui</v-list-tile-title>
                             </v-list-tile>
                             <v-list-tile @click.prevent="updateStatus(props.row)" v-if="props.row.status != 0">
-                                <v-list-tile-title ><span v-if="props.row.status != 2">Pengerjaan Selesai</span><span v-else>Pengerjaan Diperpanjang</span></v-list-tile-title>
+                                <v-list-tile-title ><span v-if="props.row.status < 2">Pengerjaan Selesai</span><span v-else>Pengerjaan Diperpanjang</span></v-list-tile-title>
                             </v-list-tile>
-                            <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true">
+                            <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true" v-if="props.row.status != 3">
                                 <v-list-tile-title >Hapus</v-list-tile-title>
                             </v-list-tile>
                             </v-list>
@@ -130,7 +130,7 @@
                                                 v-model="editData.city"
                                               ></v-autocomplete>
                                       </v-flex>
-                                       <v-flex xs12 v-if="typeInput != 'edit'">
+                                       <v-flex xs12>
                                              <v-autocomplete
                                                 :items="jt"
                                                 item-text="name"
@@ -267,7 +267,7 @@ export default {
       var uri = this.$apiUrl + 'cekPhoneNumber/' + this.editData.phoneNumber
       this.$http.get(uri, config).then(response => {
         if (response.data !== 0) {
-          this.seteditData(response.data)
+          this.setDataCustomer(response.data)
         }
       })
     },
@@ -294,12 +294,22 @@ export default {
         this.roles.push({name: 'semua'})
       })
     },
-    seteditData (data) {
-      this.editData.id = data.id
+    setDataCustomer (data) {
+      this.editData.customerId = data.id
       this.editData.name = data.name
       this.editData.phoneNumber = data.phoneNumber
       this.editData.address = data.address
       this.editData.city = data.city
+    },
+    seteditData (data) {
+      this.editData.id = data.id
+      this.editData.customerId = data.customer.id
+      this.editData.name = data.customer.name
+      this.editData.phoneNumber = data.customer.phoneNumber
+      this.editData.address = data.customer.address
+      this.editData.city = data.customer.city
+      var typeTransaction = data.transactionNumber.split('-')
+      this.editData.jenisTransaksi = typeTransaction[0]
     },
     resetData () {
       this.$refs.form.reset()
@@ -366,7 +376,7 @@ export default {
       }
       this.editData.role = 'konsumen'
       this.load = true
-      uri = this.$apiUrl + 'updateperson/' + this.editData.id
+      uri = this.$apiUrl + 'updateTransaction/' + this.editData.id
       this.$http.post(uri, this.editData, config).then(response => {
         console.log(response)
         this.getData()

@@ -35,25 +35,7 @@
                     <li :class="{'is-active': tab == 'supplierD2'}">
                     <a @click.prevent="goto('supplierD2')">
                         <v-icon>details</v-icon>
-                        <span>Sparepart</span>
-                    </a>
-                    </li>
-                    <li :class="{'is-active': tab == 'supplierD3'}">
-                    <a @click.prevent="goto('supplierD3')">
-                        <v-icon>pin_drop</v-icon>
-                        <span>Transaksi</span>
-                    </a>
-                    </li>
-                    <li :class="{'is-active': tab == 'supplierD4'}">
-                    <a @click.prevent="goto('supplierD4')">
-                        <v-icon>check_circle</v-icon>
-                        <span>Pemesanan</span>
-                    </a>
-                    </li>
-                    <li :class="{'is-active': tab == 'supplierD5'}">
-                    <a @click.prevent="goto('supplierD5')">
-                        <v-icon>local_printshop</v-icon>
-                        <span>Laporan</span>
+                        <span>Sales</span>
                     </a>
                     </li>
                 </ul>

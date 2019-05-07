@@ -9,6 +9,7 @@ export default {
     localStorage.removeItem('passwordFirst')
     localStorage.removeItem('id')
     localStorage.removeItem('name')
+    localStorage.removeItem('branch_id')
     store.commit('logoutUser')
     this.$router.push({ name: 'Login' })
   }

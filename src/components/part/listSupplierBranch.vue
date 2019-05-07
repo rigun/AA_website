@@ -43,7 +43,7 @@
                 <b-table-column field="city" label="Kota" sortable >{{ props.row.city }}</b-table-column>
                 <b-table-column field="created_at" label="Bekerjasama pada" sortable >{{props.row.created_at }}</b-table-column>
                   <b-table-column label="Pengaturan" :visible="!loadData">
-                    <v-btn color="green lighten-2" dark @click="goto(props.row.id)">Detail Supplier</v-btn>
+                    <v-btn color="green lighten-2" dark @click="goto(props.row.id)">List Sparepart</v-btn>
                 </b-table-column>
             </template>
               <template slot="empty">

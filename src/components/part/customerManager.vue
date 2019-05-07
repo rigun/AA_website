@@ -4,12 +4,7 @@
 
       <div class="columns m-t-10">
         <div class="column">
-          <h1 class="title">Daftar Supplier</h1>
-        </div>
-        <div class="column">
-            <v-flex sm6 d-flex style="margin-left: auto">
-              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="editDialog = true; typeInput = 'new'">Tambah Supplier</v-btn>
-            </v-flex>
+          <h1 class="title">Daftar Konsumen</h1>
         </div>
       </div>
        <nav class="level">
@@ -39,10 +34,8 @@
                 <b-table-column field="phoneNumber" label="Nomor Telepon" sortable>{{ props.row.phoneNumber }}</b-table-column>
                 <b-table-column field="address" label="Alamat" sortable >{{ props.row.address }}</b-table-column>
                 <b-table-column field="city" label="Kota" sortable >{{ props.row.city }}</b-table-column>
-                <b-table-column field="created_at" label="Bekerjasama pada" sortable >{{props.row.created_at }}</b-table-column>
-                  <b-table-column label="Pengaturan" :visible="!loadData">
-                    <v-btn color="green lighten-2" dark @click="goto(props.row.id)">Detail Supplier</v-btn>
-                </b-table-column>
+                <b-table-column field="transaction.length" label="Jumlah Transaksi" sortable >{{ props.row.transaction.length }}</b-table-column>
+                <b-table-column field="created_at" label="Tanggal transaksi pertama" sortable >{{props.row.created_at }}</b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >
                                 <v-icon>more_vert</v-icon>
@@ -51,7 +44,7 @@
                             <v-list-tile  @click.prevent="seteditData(props.row); editDialog = true">
                                 <v-list-tile-title  >Perbaharui</v-list-tile-title>
                             </v-list-tile>
-                            <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true">
+                            <v-list-tile @click.prevent="deleteId = props.row.id; deleteDialog = true" v-if="props.row.transaction.length === 0">
                                 <v-list-tile-title >Hapus</v-list-tile-title>
                             </v-list-tile>
                             </v-list>
@@ -67,7 +60,7 @@
                                 size="is-large">
                             </b-icon>
                         </p>
-                        <p>Belum ada data supplier, silahkan tambahkan supplier terlebih dahulu</p>
+                        <p>Belum ada data konsumen, silahkan tambahkan konsumen terlebih dahulu</p>
                     </div>
                 </section>
             </template>
@@ -99,7 +92,7 @@
                                 >
                               <v-card>
                                 <v-card-title>
-                                    Tambahkan Supplier
+                                    Tambahkan Konsumen
                                 </v-card-title>
                                 <v-card-text>
                                   <v-container grid-list-md>
@@ -183,7 +176,7 @@ export default {
       reset: false,
       editData: {
         name: '',
-        role: 'supplier',
+        role: 'konsumen',
         phoneNumber: '',
         address: '',
         city: ''
@@ -235,7 +228,7 @@ export default {
       this.editData.phoneNumber = data.phoneNumber
       this.editData.address = data.address
       this.editData.city = data.city
-      this.editData.role = 'supplier'
+      this.editData.role = 'konsumen'
     },
     resetData (data) {
       this.editDialog = false
@@ -282,7 +275,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + 'personbyrole/supplier'
+      uri = this.$apiUrl + 'personbyrole/konsumen'
       this.$http.post(uri, this.editData, config).then(response => {
         this.getData()
       }).catch(error => {
@@ -320,32 +313,10 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + 'personbyrole/supplier'
+      uri = this.$apiUrl + 'konsumen'
       this.$http.get(uri, config).then(response => {
         this.users = response.data.result
         this.resetData()
-      })
-    },
-    updateStatus (user) {
-      var config = {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      }
-      var uri = '/api/user/status/' + user.id
-      if (user.status === 0) {
-        user.status = 1
-      } else {
-        user.status = 0
-      }
-      this.$http.patch(uri, { status: user.status }, config).then(response => {
-        console.log(response)
-        // this.getData()
-      }).catch(error => {
-        console.log(error)
-        this.snackbar = true
-        this.text = 'Coba lagi'
-        this.color = 'error'
       })
     }
   }

@@ -427,6 +427,13 @@ export default {
         this.color = 'error'
         return
       }
+      if (this.editData.buy > this.editData.sell) {
+        this.snackbar = true
+        this.text = 'Harga beli lebih mahal daripada harga jual'
+        this.color = 'red'
+        this.editData.totalAccept = this.editData.total
+        return
+      }
       this.editData.position = this.editData.letak + '-' + this.editData.rak + '-' + this.editData.urut
       this.loading = true
       this.editData.sparepart_code = this.editData.sparepart.code
@@ -453,6 +460,13 @@ export default {
         this.snackbar = true
         this.text = 'Mohon untuk melengkapi form yang tersedia'
         this.color = 'red'
+        return
+      }
+      if (this.editData.buy > this.editData.sell) {
+        this.snackbar = true
+        this.text = 'Harga beli lebih mahal daripada harga jual'
+        this.color = 'red'
+        this.editData.totalAccept = this.editData.total
         return
       }
       this.editData.position = this.editData.letak + '-' + this.editData.rak + '-' + this.editData.urut

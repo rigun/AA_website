@@ -12,6 +12,7 @@ import './style/main.styl'
 import VueCroppie from 'vue-croppie'
 // Vue.prototype.$apiUrl = 'https://api1.thekingcorp.org/'
 Vue.prototype.$apiUrl = 'http://127.0.0.1:8000/'
+// Vue.prototype.$apiUrl = 'http://192.168.0.178/'
 Vue.use(VueCroppie)
 Vue.use(Buefy)
 Vue.use(Vuetify)

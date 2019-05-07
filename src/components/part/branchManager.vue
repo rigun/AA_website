@@ -36,9 +36,9 @@
             <template slot-scope="props">
                 <b-table-column label="No." sortable>{{ props.index + 1 }}</b-table-column>
                 <b-table-column field="name" label="Name" sortable>{{ props.row.name }}</b-table-column>
-                <b-table-column label="Pegawai">{{ props.row.employee.length }}</b-table-column>
-                <b-table-column label="Sparepart">{{ props.row.spareparts.length }}</b-table-column>
-                <b-table-column label="Transaksi">{{ props.row.transaction.length }}</b-table-column>
+                <b-table-column label="Pegawai">{{ props.row.employee_count }}</b-table-column>
+                <b-table-column label="Sparepart">{{ props.row.spareparts_count }}</b-table-column>
+                <b-table-column label="Transaksi">{{ props.row.transaction_count }}</b-table-column>
                 <b-table-column field="created_at" label="Dibuat pada">{{ props.row.created_at }}</b-table-column>
                 <b-table-column label="Pengaturan" :visible="!loadData">
                     <v-btn color="green lighten-2" dark @click="goto(props.row.id)">Detail Cabang</v-btn>

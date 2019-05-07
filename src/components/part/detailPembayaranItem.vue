@@ -21,8 +21,10 @@
           <p v-for="dt in detailTransactions" :key="dt.vehicle_customer.vehicle.id"><span>- {{dt.vehicle_customer.vehicle.merk + " " + dt.vehicle_customer.vehicle.type + " " + dt.vehicle_customer.licensePlate}}</span></p>
         </div>
         <div class="column">
+              <p v-if="montirError">Nota Lunas Belum Bisa di Cetak Karena Transaksi Belum Selesai</p>
+
             <v-flex sm6 d-flex style="margin-left: auto">
-              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="dialogNotaLunas = true;countDiskon();countChange()">Cetak Nota Lunas</v-btn>
+              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="dialogNotaLunas = true;countDiskon();countChange()" v-if="!montirError">Cetak Nota Lunas</v-btn>
             </v-flex>
         </div>
       </div>
@@ -44,15 +46,6 @@
                     </b-select>
                 </b-field>
              </div>
-             <div class="level-right">
-                    <b-field>
-                        <b-input placeholder="Search..."
-                            type="search"
-                            icon="magnify"
-                            v-model="search">
-                        </b-input>
-                    </b-field>
-                 </div>
            </nav>
         <b-table :data="detailTransactionsSparepartList" :paginated="true" :per-page="perPage" :current-page.sync="currentPage" :loading="loadDataSparepart" :pagination-simple="true" :narrowed="true" :mobile-cards="true" :striped="true" :hoverable="true">
             <template slot-scope="props">
@@ -100,15 +93,7 @@
                     </b-select>
                 </b-field>
              </div>
-             <div class="level-right">
-                    <b-field>
-                        <b-input placeholder="Search..."
-                            type="search"
-                            icon="magnify"
-                            v-model="search">
-                        </b-input>
-                    </b-field>
-                 </div>
+     
            </nav>
         <b-table :data="detailTransactionsLayananList" :paginated="true" :per-page="perPage" :current-page.sync="currentPage" :loading="loadDataLayanan" :pagination-simple="true" :narrowed="true" :mobile-cards="true" :striped="true" :hoverable="true">
             <template slot-scope="props">
@@ -187,7 +172,7 @@
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="red darken-1" dark @click.prevent="dialogSPK = false;">Batal</v-btn>
+                      <v-btn color="red darken-1" dark @click.prevent="dialogNotaLunas = false;">Batal</v-btn>
                       <v-btn color="green darken-1" dark :loading="load" @click.prevent="cetakNotaLunas()">Cetak</v-btn>
                     </v-card-actions>
                   </v-card>
@@ -247,7 +232,8 @@ export default {
       biayaMinDiskon: 0,
       displayBiayaMinDiskon: 0,
       displayKembalian: 0,
-      changeError: ''
+      changeError: '',
+      montirError: false
     }
   },
   computed: {
@@ -292,7 +278,11 @@ export default {
           return true
         })
         if (j.length === unique.length) {
-          unique.push(this.detailTransactions[i])
+          if (this.detailTransactions[i].montir_id != null) {
+            unique.push(this.detailTransactions[i])
+          } else {
+            this.montirError = true
+          }
         }
       }
       this.uniqueMontir = unique
@@ -324,7 +314,7 @@ export default {
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', 'spk_' + this.$route.params.transactionType + '-' + this.$route.params.transactionNumber + '-' + this.$route.params.idTransaction + '.pdf')
+        link.setAttribute('download', 'notaLunas_' + this.$route.params.transactionType + '-' + this.$route.params.transactionNumber + '-' + this.$route.params.idTransaction + '.pdf')
         document.body.appendChild(link)
         link.click()
         this.load = false

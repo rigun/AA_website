@@ -125,6 +125,7 @@ export default {
         localStorage.setItem('checkbox', this.checkbox)
         localStorage.setItem('token', response.data.access_token)
         localStorage.setItem('roles', response.data.role)
+        localStorage.setItem('branch_id', response.data.branch_id)
         this.$router.push({ name: 'DashboardContent' })
       }).catch(error => {
         console.log(error)

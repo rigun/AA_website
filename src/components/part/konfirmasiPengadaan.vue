@@ -6,12 +6,7 @@
             <li>
                 <router-link v-bind:to="{name: 'branchD5'}">Pemesanan</router-link>
             </li>
-            <li>
-                <router-link v-bind:to="{name: 'listSupplierBranch'}">
-                    Supplier
-                </router-link>
-            </li>
-            <li class="is-active"><a href="#">{{supplier.name}}</a></li>
+            <li class="is-active"><a href="#">Konfirmasi</a></li>
         </ul>
         </nav>
       <div class="columns m-t-10">
@@ -20,9 +15,36 @@
         </div>
         <div class="column">
             <v-flex sm12 d-flex style="margin-left: auto">
-              <v-btn slot="activator" md6 color="red " dark @click.prevent="deleteDialog = true" v-if="pemesanan == true">Batalkan Pesanan</v-btn>
-              <v-btn slot="activator" md6 color="blue lighten-2" dark @click.prevent="salesDialog = true"  v-if="pemesanan == true">Cetak Surat Pemesanan</v-btn>
+              <v-btn slot="activator" md6 color="green" dark @click.prevent="konfirmDialog = true" v-if="status != 2">Konfirmasi</v-btn>
             </v-flex>
+        </div>
+      </div>
+      <div class="columns is-multiline" >
+        <div class="column is-3">
+          <div class="card">
+            <div class="card-content">
+              <div class="card-title">
+                <h2>Supplier</h2>
+              </div>
+              {{supplier.name}} <br>
+              {{supplier.phoneNumber}} <br>
+              {{supplier.address}} <br>
+              {{supplier.city}} <br>
+            </div>
+          </div>
+        </div>
+        <div class="column is-3">
+          <div class="card">
+            <div class="card-content">
+              <div class="card-title">
+                <h2>Sales</h2>
+              </div>
+              {{sales.name}} <br>
+              {{sales.phoneNumber}} <br>
+              {{sales.address}} <br>
+              {{sales.city}} <br>
+            </div>
+          </div>
         </div>
       </div>
        <nav class="level">
@@ -55,19 +77,18 @@
                 <b-table-column field="name" label="Nama" sortable>{{ props.row.data.sparepart.name }}</b-table-column>
                 <b-table-column field="merk" label="Merk" sortable>{{ props.row.data.sparepart.merk }}</b-table-column>
                 <b-table-column field="type" label="Tipe" sortable>{{ props.row.data.sparepart.type }}</b-table-column>
-                <b-table-column field="position" label="Posisi" sortable>{{ props.row.data.position }}</b-table-column>
-                <b-table-column field="stock" label="Stock" sortable >{{props.row.data.stock }}</b-table-column>
-                <b-table-column label="Stock Minimal" sortable >{{props.row.data.limitstock }}</b-table-column>
-                <b-table-column label="Harga Beli" sortable >{{price(props.row.data.buy) }}</b-table-column>
-                <b-table-column label="Harga Jual" sortable >{{price(props.row.data.sell) }}</b-table-column>
-                <b-table-column label="Jumlah Yang dipesan" sortable >{{props.row.total }}</b-table-column>
-                            <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
+                <b-table-column field="stock" label="Stock" sortable numeric>{{props.row.data.stock }}</b-table-column>
+                <b-table-column label="Stock Minimal" sortable numeric>{{props.row.data.limitstock }}</b-table-column>
+                <b-table-column label="Harga Beli" sortable numeric>{{price(props.row.data.buy) }}</b-table-column>
+                <b-table-column label="Jumlah yang dipesan" sortable numeric>{{props.row.total }}</b-table-column>
+                <b-table-column label="Jumlah yang diterima" sortable numeric>{{props.row.totalAccept }}</b-table-column>
+                            <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left v-if="status != 2">
                                 <v-btn slot="activator" icon >
                                 <v-icon>more_vert</v-icon>
                                 </v-btn>
                             <v-list>
-                            <v-list-tile  @click.prevent="seteditData(props.row.data); editDialog = true">
-                                <v-list-tile-title  >Pesan</v-list-tile-title>
+                            <v-list-tile  @click.prevent="seteditData(props.row); editDialog = true">
+                                <v-list-tile-title  >Edit</v-list-tile-title>
                             </v-list-tile>
                             </v-list>
                         </v-menu>
@@ -114,7 +135,7 @@
                                 >
                               <v-card>
                                 <v-card-title>
-                                    Tambahkan Sparepart
+                                    Konfirmasi jumlah sparepart yang diterima
                                 </v-card-title>
                                 <v-card-text>
                                   <v-container grid-list-md>
@@ -150,10 +171,16 @@
                                         <v-text-field type="text" label="Stock Minimal Sparepart" :disabled="true" v-model="editData.limitstock"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        <v-text-field type="text" label="Jumlah pesanan" :rules="[rules.required,rules.numberOnly]" v-model="editData.total"></v-text-field>
+                                        <v-text-field type="text" label="Jumlah pesanan" :disabled="true" v-model="editData.total"></v-text-field>
                                       </v-flex>
                                        <v-flex xs12>
-                                        <v-text-field type="text" label="Satuan Barang" :rules="[rules.required,rules.textOnly]" v-model="editData.unit"></v-text-field>
+                                        <v-text-field type="text" label="Jumlah barang diterima*" :rules="[rules.required,rules.numberOnly]" v-model="editData.totalAccept"></v-text-field>
+                                      </v-flex>
+                                       <v-flex xs12>
+                                        <v-text-field type="text" label="Harga Beli*" :rules="[rules.required,rules.numberOnly]" v-model="editData.buy"></v-text-field>
+                                      </v-flex>
+                                       <v-flex xs12>
+                                        <v-text-field type="text" label="Harga Jual" :rules="[rules.required,rules.numberOnly]" v-model="editData.sell"></v-text-field>
                                       </v-flex>
                                     </v-layout>
                                   </v-container>
@@ -162,76 +189,27 @@
                                 <v-card-actions>
                                   <v-spacer></v-spacer>
                                   <v-btn color="red darken-1" dark @click.prevent="editDialog = false; resetData()">Batal</v-btn>
-                                  <v-btn color="green darken-1" dark v-if="typeInput == 'new'" @click.prevent="SendData()" :loading="loading">Tambahkan</v-btn>
-                                  <v-btn color="orange darken-1" dark v-if="typeInput == 'edit'" @click.prevent="UpdateData()" :loading="loading">Pesan</v-btn>
+                                  <v-btn color="green darken-1" dark @click.prevent="SendData()" :loading="loading">Konfirmasi</v-btn>
                                 </v-card-actions>
                               </v-card>
                                 </v-form>
                             </v-dialog>
                           </v-layout>
         <!-- edit -->
-        <!-- delete -->
-          <v-layout row justify-center>
-                  <v-dialog v-model="deleteDialog" persistent max-width="290">
+        <!-- edit -->
+           <v-layout row justify-center>
+                  <v-dialog v-model="konfirmDialog" persistent max-width="290">
                     <v-card>
-                      <v-card-title class="headline">Batalkan pemesanan ini ?</v-card-title>
-                      <v-card-text>Pemesanan yang dihapus tidak akan dapat dikembalikan lagi</v-card-text>
+                      <v-card-title class="headline">Konfirmasi Pemesanan Ini?</v-card-title>
+                      <v-card-text>Pemesanan yang dikonfirmasi tidak akan dapat ubah lagi</v-card-text>
                       <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" flat @click="deleteDialog = false">Batal</v-btn>
-                        <v-btn color="red darken-1" flat @click="deleteData()">Hapus</v-btn>
+                        <v-btn color="green darken-1" flat @click="konfirmDialog = false">Batal</v-btn>
+                        <v-btn color="red darken-1" flat @click="konfirmasiData()">Konfirmasi</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
                 </v-layout>
-        <!-- delete -->
-        <!-- edit -->
-         <v-layout row justify-center>
-                            <v-dialog v-model="salesDialog" persistent max-width="600px">
-                                <v-form
-                                    ref="form2"
-                                    v-model="valid"
-                                    lazy-validation
-                                >
-                              <v-card>
-                                <v-card-title>
-                                    Sales Supplier yang Bertugas
-                                </v-card-title>
-                                <v-card-text>
-                                  <v-container grid-list-md>
-                                    <v-layout wrap>
-                                      <v-flex xs12>
-                                        <v-text-field label="Nama Sales*" required v-model="salesData.name" :rules="[rules.required, rules.textOnly]"></v-text-field>
-                                      </v-flex>
-                                        <v-flex xs12>
-                                        <v-text-field label="Nomor Handphone Sales*" required v-model="salesData.phoneNumber" :rules="[rules.required, rules.numberOnly]" @change="cekPhoneNumber()"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                        <v-text-field label="Alamat Sales*" required v-model="salesData.address" :rules="[rules.required]"></v-text-field>
-                                      </v-flex>
-                                       <v-flex xs12>
-                                         <v-autocomplete
-                                                :items="cities"
-                                                :filter="citiesFilter"
-                                                item-text="name"
-                                                label="Kota Sales*"
-                                                :rules="[rules.required]"
-                                                v-model="salesData.city"
-                                          ></v-autocomplete>
-                                      </v-flex>
-                                    </v-layout>
-                                  </v-container>
-                                  <small>*Wajib diisi</small>
-                                </v-card-text>
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn color="red darken-1" dark @click.prevent="salesDialog = false">Batal</v-btn>
-                                  <v-btn color="green darken-1" dark @click.prevent="cetakPemesanan()" :loading="load">Cetak</v-btn>
-                                </v-card-actions>
-                              </v-card>
-                                </v-form>
-                            </v-dialog>
-                          </v-layout>
         <!-- edit -->
 </div>
 </div>
@@ -242,16 +220,17 @@ export default {
   mounted () {
     this.$parent.tab = 'branchD5'
     this.getData()
-    this.getSupplier()
     this.getCities()
   },
   data () {
     return {
+      status: 2,
+      sales: {},
       pemesanan: false,
       supplier: {
         name: ''
       },
-      salesDialog: false,
+      konfirmDialog: false,
       errorSparepart: '',
       valid: true,
       typeInput: 'new',
@@ -260,7 +239,7 @@ export default {
       stat: '',
       search: '',
       spareparts: [],
-      branchSpareprats: [],
+      order: [],
       dialog: false,
       deleteDialog: false,
       snackbar: false,
@@ -283,13 +262,6 @@ export default {
         buy: null,
         sell: null
       },
-      salesData: {
-        name: '',
-        role: 'sales',
-        phoneNumber: '',
-        address: '',
-        city: ''
-      },
       editDialog: false,
       load: false,
       deleteId: -1,
@@ -302,15 +274,7 @@ export default {
       perPage: 10,
       roles: [],
       unique: true,
-      letak: ['DPN', 'TGH', 'BLK'],
-      rak: ['KACA', 'DUS', 'BAN', 'KAYU'],
       errorMessage: '',
-      errorCode: false,
-      urut: [],
-      emailRules: [
-        v => !!v || 'Email tidak boleh kosong',
-        v => /.+@.+/.test(v) || 'Email tidak valid'
-      ],
       rules: {
         required: value => !!value || 'Data ini tidak boleh kosong',
         numberOnly: value => !isNaN(value) || 'Data tidak valid, hanya diijinkan memasukkan angka',
@@ -321,8 +285,8 @@ export default {
   },
   computed: {
     sparepartList () {
-      if (this.branchSpareprats.length) {
-        return this.branchSpareprats.filter((row, index) => {
+      if (this.order.length) {
+        return this.order.filter((row, index) => {
           if (this.search !== '') return row.data.sparepart.name.toLowerCase().includes(this.search.toLowerCase()) || row.data.sparepart.code.toLowerCase().includes(this.search.toLowerCase())
           return true
         })
@@ -330,88 +294,8 @@ export default {
     }
   },
   methods: {
-    setSalesData (data) {
-      this.salesData.id = data.id
-      this.salesData.name = data.name
-      this.salesData.phoneNumber = data.phoneNumber
-      this.salesData.address = data.address
-      this.salesData.city = data.city
-    },
-    cekPhoneNumber () {
-      var config = {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      }
-      var uri = this.$apiUrl + 'cekPhoneNumber/' + this.salesData.phoneNumber
-      this.$http.get(uri, config).then(response => {
-        if (response.data !== 0) {
-          this.setSalesData(response.data)
-        }
-      })
-    },
-    cetakPemesanan () {
-      if (!this.$refs.form2.validate()) {
-        this.snackbar = true
-        this.text = 'Mohon untuk melengkapi form yang tersedia'
-        this.color = 'error'
-        return
-      }
-      this.load = true
-      var uri
-      var config = {
-        responseType: 'blob',
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      }
-      this.salesData.supplier_id = this.$route.params.supplierId
-      this.salesData.branch_id = this.$route.params.id
-      uri = this.$apiUrl + 'cetakPemesanan'
-      this.$http.post(uri, this.salesData, config).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'pemesanan_' + this.$route.params.supplierId + '-' + this.$route.params.id + '.pdf')
-        document.body.appendChild(link)
-        link.click()
-        this.load = false
-        this.salesDialog = false
-        this.$nextTick(function () {
-          this.$router.push({name: 'branchD5'})
-        })
-      }).catch(error => {
-        console.log(error.response)
-        this.snackbar = true
-        this.text = 'Coba Lagi'
-        this.color = 'error'
-        this.load = false
-      })
-    },
-    citiesFilter (item, queryText, itemText) {
-      const textOne = item.name.toLowerCase()
-      const searchText = queryText.toLowerCase()
-      return textOne.indexOf(searchText) > -1
-    },
-    getCities () {
-      var uri = this.$apiUrl + 'cities'
-      this.$http.get(uri).then(response => {
-        this.cities = response.data
-      })
-    },
-    getSupplier () {
-      var config = {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      }
-      var uri = this.$apiUrl + 'person/' + this.$route.params.supplierId
-      this.$http.get(uri, config).then(response => {
-        this.supplier = response.data.result
-      })
-    },
     cekSparepartCode () {
-      var sparepart = this.branchSpareprats.filter((row, index) => {
+      var sparepart = this.order.filter((row, index) => {
         if (row.sparepart.code === this.editData.sparepart.code) {
           return true
         }
@@ -451,21 +335,21 @@ export default {
     },
     seteditData (data) {
       this.typeInput = 'edit'
-      this.editData.sparepart = data.sparepart
-      this.editData.buy = data.buy
-      this.editData.sell = data.sell
-      this.editData.stock = data.stock
-      this.editData.limitstock = data.limitstock
+      this.editData.sparepart = data.data.sparepart
+      this.editData.buy = data.data.buy
+      this.editData.sell = data.data.sell
+      this.editData.stock = data.data.stock
+      this.editData.limitstock = data.data.limitstock
+      this.editData.total = data.total
+      this.editData.totalAccept = data.totalAccept
       this.editData.id = data.id
-      var position = data.position.split('-')
-      this.editData.letak = position[0]
-      this.editData.rak = position[1]
-      this.editData.urut = position[2]
+      this.editData.sparepart_branchId = data.data.id
       this.editData.sparepart.view = this.editData.sparepart.code + ' ' + this.editData.sparepart.name
     },
     resetData (data) {
       this.loading = false
-      this.deleteDialog = false
+      this.editDialog = false
+      this.konfirmDialog = false
       this.deleteId = -1
       this.typeInput = 'new'
       this.editData.sparepart = {
@@ -478,18 +362,17 @@ export default {
       this.editData.position = ''
       this.editData.limitstock = ''
     },
-    deleteData () {
+    konfirmasiData () {
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      var uri = this.$apiUrl + 'sparepartBS/' + this.$route.params.supplierId + '/' + this.$route.params.id
-      this.$http.delete(uri, config).then(response => {
+      var uri = this.$apiUrl + 'konfirmasiData/' + this.$route.params.orderId
+      this.$http.get(uri, config).then(response => {
         this.snackbar = true
-        this.text = 'Data berhasil dihapus'
+        this.text = 'Data berhasil di konfirmasi'
         this.color = 'green'
-        this.resetData()
         this.getData()
       }).catch(error => {
         console.log(error)
@@ -506,50 +389,21 @@ export default {
         this.color = 'red'
         return
       }
-      if (this.errorSparepart !== '') {
+      if (this.editData.totalAccept === null) {
+        this.editData.totalAccept = 0
+      }
+      if (this.editData.totalAccept > this.editData.total) {
         this.snackbar = true
-        this.text = 'Mohon untuk melengkapi form yang tersedia'
+        this.text = 'Total yang diterima melebihi jumlah yang dipesan'
         this.color = 'red'
+        this.editData.totalAccept = this.editData.total
         return
       }
-      if (this.errorCode) {
+      if (this.editData.buy > this.editData.sell) {
         this.snackbar = true
-        this.text = 'Mohon untuk kode sparepart yang benar'
-        this.color = 'error'
-        return
-      }
-      this.editData.position = this.editData.letak + '-' + this.editData.rak + '-' + this.editData.urut
-      this.loading = true
-      this.editData.sparepart_code = this.editData.sparepart.code
-      var uri
-      var config = {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      }
-      uri = this.$apiUrl + 'sparepartBranch'
-      this.editData.branch_id = this.$route.params.id
-      this.$http.post(uri, this.editData, config).then(response => {
-        this.resetData()
-        this.getData()
-      }).catch(error => {
-        console.log(error.response)
-        this.snackbar = true
-        this.text = error.response.data.errors.phoneNumber[0]
+        this.text = 'Harga beli lebih mahal daripada harga jual'
         this.color = 'red'
-      })
-    },
-    UpdateData () {
-      if (!this.$refs.form.validate()) {
-        this.snackbar = true
-        this.text = 'Mohon untuk melengkapi form yang tersedia'
-        this.color = 'red'
-        return
-      }
-      if (parseInt(this.editData.total) + parseInt(this.editData.stock) <= this.editData.limitstock) {
-        this.snackbar = true
-        this.text = 'Mohon maaf, barang yang dipesan masih di bawah stock minimal'
-        this.color = 'red'
+        this.editData.totalAccept = this.editData.total
         return
       }
       this.loading = true
@@ -559,10 +413,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      this.editData.supplier_id = this.supplier.id
-      this.editData.branch_id = this.$route.params.id
-      this.editData.sparepart_code = this.editData.sparepart.code
-      uri = this.$apiUrl + 'order'
+      uri = this.$apiUrl + 'storetotalaccept'
       this.$http.post(uri, this.editData, config).then(response => {
         this.resetData()
         this.getData()
@@ -574,25 +425,19 @@ export default {
       })
     },
     getData () {
-      this.editDialog = false
-      this.deleteDialog = false
+      this.konfirmDialog = false
       var uri
       var config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + 'sparepartBS/' + this.$route.params.supplierId + '/' + this.$route.params.id
+      uri = this.$apiUrl + 'detailPemesanan/' + this.$route.params.orderId
       this.$http.get(uri, config).then(response => {
-        this.branchSpareprats = response.data
-        for (let i = 0; i < response.data.length; i++) {
-          if (response.data[i].total > 0) {
-            this.pemesanan = true
-            break
-          } else {
-            this.pemesanan = false
-          }
-        }
+        this.order = response.data.detail
+        this.supplier = response.data.supplier
+        this.sales = response.data.sales
+        this.status = response.data.status
         this.loadData = false
       })
     }

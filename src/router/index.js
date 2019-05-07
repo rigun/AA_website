@@ -50,9 +50,39 @@ const routes = [
         component: loadViewDashboard('manageSupplier')
       },
       {
+        path: 'riwayat',
+        name: 'historyTransaction',
+        component: loadViewDashboard('historyTransaction')
+      },
+      {
+        path: 'customer',
+        name: 'customerManager',
+        component: loadViewDashboard('customerManager')
+      },
+      {
         path: 'ubahpassword',
         name: 'changePassword',
         component: loadViewDashboard('changePassword')
+      },
+      {
+        path: 'transaksi/:id',
+        name: 'transactionCs',
+        component: loadViewDashboard('transactionBranchD3')
+      },
+      {
+        path: 'pembayaran/:transactionType-:transactionNumber-:idTransaction',
+        name: 'detailPembayaranKasir',
+        component: loadViewDashboard('detailPembayaranItem')
+      },
+      {
+        path: 'transaksi/:transactionType-:transactionNumber-:idTransaction/:detailId',
+        name: 'detailTransactionItemCs',
+        component: loadViewDashboard('detailTransactionItem')
+      },
+      {
+        path: 'transaksi/:transactionType-:transactionNumber-:idTransaction',
+        name: 'detailTransactionCs',
+        component: loadViewDashboard('detailTransaction')
       },
       {
         path: 'cabang',
@@ -99,6 +129,11 @@ const routes = [
             component: loadViewDashboard('sparepartBranchSupplier')
           },
           {
+            path: 'pengadaan/konfirmasi/:orderId',
+            name: 'konfirmasiPengadaan',
+            component: loadViewDashboard('konfirmasiPengadaan')
+          },
+          {
             path: 'pembayaran/:transactionType-:transactionNumber-:idTransaction',
             name: 'detailPembayaran',
             component: loadViewDashboard('detailPembayaranItem')
@@ -123,6 +158,11 @@ const routes = [
             path: '',
             name: 'supplierD1',
             component: loadViewDashboard('detailSupplierD1')
+          },
+          {
+            path: 'sales',
+            name: 'supplierD2',
+            component: loadViewDashboard('detailSupplierD2')
           }
         ]
       }

@@ -4,11 +4,11 @@
 
       <div class="columns m-t-10">
         <div class="column">
-          <h1 class="title">Daftar Supplier</h1>
+          <h1 class="title">Daftar Sales</h1>
         </div>
         <div class="column">
             <v-flex sm6 d-flex style="margin-left: auto">
-              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="editDialog = true; typeInput = 'new'">Tambah Supplier</v-btn>
+              <v-btn slot="activator" color="blue lighten-2" dark @click.prevent="editDialog = true; typeInput = 'new'">Tambah Sales</v-btn>
             </v-flex>
         </div>
       </div>
@@ -41,7 +41,7 @@
                 <b-table-column field="city" label="Kota" sortable >{{ props.row.city }}</b-table-column>
                 <b-table-column field="created_at" label="Bekerjasama pada" sortable >{{props.row.created_at }}</b-table-column>
                   <b-table-column label="Pengaturan" :visible="!loadData">
-                    <v-btn color="green lighten-2" dark @click="goto(props.row.id)">Detail Supplier</v-btn>
+                    <v-btn color="green lighten-2" dark @click="goto(props.row.id)">Detail Sales</v-btn>
                 </b-table-column>
                             <b-table-column label=""><v-menu transition="slide-x-transition" offset-x left>
                                 <v-btn slot="activator" icon >
@@ -67,7 +67,7 @@
                                 size="is-large">
                             </b-icon>
                         </p>
-                        <p>Belum ada data supplier, silahkan tambahkan supplier terlebih dahulu</p>
+                        <p>Belum ada data sales, silahkan tambahkan sales terlebih dahulu</p>
                     </div>
                 </section>
             </template>
@@ -99,7 +99,7 @@
                                 >
                               <v-card>
                                 <v-card-title>
-                                    Tambahkan Supplier
+                                    Tambahkan Sales
                                 </v-card-title>
                                 <v-card-text>
                                   <v-container grid-list-md>
@@ -183,7 +183,7 @@ export default {
       reset: false,
       editData: {
         name: '',
-        role: 'supplier',
+        role: 'sales',
         phoneNumber: '',
         address: '',
         city: ''
@@ -226,7 +226,7 @@ export default {
       })
     },
     goto (id) {
-      this.$router.push({name: 'supplierD1', params: {id: id}})
+      this.$router.push({name: 'salesD1', params: {id: id}})
     },
     seteditData (data) {
       this.typeInput = 'edit'
@@ -235,7 +235,7 @@ export default {
       this.editData.phoneNumber = data.phoneNumber
       this.editData.address = data.address
       this.editData.city = data.city
-      this.editData.role = 'supplier'
+      this.editData.role = 'sales'
     },
     resetData (data) {
       this.editDialog = false
@@ -282,7 +282,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + 'personbyrole/supplier'
+      uri = this.$apiUrl + 'sales/' + this.$route.params.id
       this.$http.post(uri, this.editData, config).then(response => {
         this.getData()
       }).catch(error => {
@@ -320,7 +320,7 @@ export default {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }
-      uri = this.$apiUrl + 'personbyrole/supplier'
+      uri = this.$apiUrl + 'sales/' + this.$route.params.id
       this.$http.get(uri, config).then(response => {
         this.users = response.data.result
         this.resetData()

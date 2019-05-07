@@ -49,28 +49,13 @@
                             </router-link>
                 </div>
                 <div class="navbar-item" v-if="roles != null">
-                    <!-- transaction -->
-                     <v-btn
-                                :dark="!isnavbar"
-                                icon
-                                @click="goto('myTransaction')"
-                                >
-                    <v-icon >compare_arrows</v-icon>
-                    <div class="notifRed" v-if="count > 0">{{count}}</div>
-                                </v-btn>
-                    <!-- notif -->
-                     <v-btn
-                                :dark="!isnavbar"
-                                icon
-                                >
-                    <v-icon >notifications</v-icon>
-                                </v-btn>
-                    <!-- user -->
                       <v-menu
                             v-model="menu"
-                            :nudge-width="200"
-                             offset-y
+                            :nudge-width="150"
+                            offset-x
+                            offset-y
                             bottom
+                            left
                             >
                                 <v-btn
                                 slot="activator"
@@ -78,7 +63,6 @@
                                 icon
                                 >
                     <v-icon v-if="picture == null">account_circle</v-icon>
-                    <img :src="'/images/profile/'+picture" style="border-radius: 200px;" alt="" v-if="picture != null">
                                 </v-btn>
 
                             <v-card>
@@ -86,25 +70,22 @@
                                 <v-list-tile>
                                     <v-list-tile-content>
                                     <v-list-tile-sub-title>Hello</v-list-tile-sub-title>
-                                        <v-list-tile-title>{{user.name}}</v-list-tile-title>
+                                        <v-list-tile-title>{{name}}</v-list-tile-title>
                                     </v-list-tile-content>
                                 </v-list-tile>
                                 </v-list>
                                 <v-divider></v-divider>
 
                                 <v-list>
-                                <v-list-tile @click="goto('myTicket')">
-                                    <v-list-tile-title>My Ticket</v-list-tile-title>
-                                </v-list-tile>
 
-                                <v-list-tile @click="goto('profile')">
-                                    <v-list-tile-title>Edit Profile</v-list-tile-title>
+                                <v-list-tile @click="goto('DashboardContent')">
+                                    <v-list-tile-title>Dashboard</v-list-tile-title>
                                 </v-list-tile>
-                                <v-list-tile @click="goto('changePasswordUser')">
-                                    <v-list-tile-title>Change Password</v-list-tile-title>
+                                <v-list-tile @click="goto('changePassword')">
+                                    <v-list-tile-title>Ubah Password</v-list-tile-title>
                                 </v-list-tile>
                                 <v-list-tile @click="goto('Logout')">
-                                    <v-list-tile-title color="red">Logout</v-list-tile-title>
+                                    <v-list-tile-title color="red">Keluar</v-list-tile-title>
                                 </v-list-tile>
                                 </v-list>
 
@@ -213,6 +194,7 @@ margin: auto;
 export default {
   data () {
     return {
+      count: 0,
       logo: 'logo.png',
       roles: localStorage.getItem('roles'),
       isnavbar: false,
@@ -221,7 +203,8 @@ export default {
       showMenu: false,
       picture: null,
       islanding: true,
-      navbarActive: '#Home'
+      navbarActive: '#Home',
+      name: localStorage.getItem('name')
     }
   },
   mounted () {
@@ -258,20 +241,23 @@ export default {
       }
     },
     getUser () {
+      if (localStorage.getItem('name') !== null) {
+        this.loading = false
+        return
+      }
+      this.$refs.topProgress.start()
       this.$http.get(this.$apiUrl + 'user', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }
       }).then(response => {
-        this.$refs.topProgress.done()
-        this.loading = false
         if (response.data.status === 'Token is Expired' || response.data.userdata === null || response.data[0] === 'user_not_found') {
           this.$router.push({ name: 'Logout' })
         } else {
           this.user = response.data.userdata
-          this.$nextTick(function () {
-            // this.getCount()
-          })
+          this.name = response.data.userdata.role.name
+          localStorage.setItem('name', this.user.role.name)
+          localStorage.setItem('id', this.user.id)
         }
       }).catch(error => {
         console.log(error)
